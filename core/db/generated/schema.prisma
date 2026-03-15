@@ -1,0 +1,230 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../core/db/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum Plan {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+enum DocStatus {
+  PENDING
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum MessageRole {
+  user
+  assistant
+  system
+}
+
+///////////////////////////////////////////////////////
+// NEXTAUTH + USER
+///////////////////////////////////////////////////////
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  memberships   Membership[]
+  aiUsage       AiUsage[]
+  conversations Conversation[] @relation("UserConversations")
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([sessionToken])
+}
+
+///////////////////////////////////////////////////////
+// ORGANIZATION (TENANT ROOT)
+///////////////////////////////////////////////////////
+
+model Organization {
+  id               String   @id @default(cuid())
+  name             String
+  plan             Plan     @default(FREE)
+  tokenLimit       Int      @default(100000)
+  stripeCustomerId String?  @unique
+  createdAt        DateTime @default(now())
+
+  memberships Membership[]
+  workspaces  Workspace[]
+  documents   Document[]
+  aiUsage     AiUsage[]
+}
+
+///////////////////////////////////////////////////////
+// MEMBERSHIP (USER ↔ ORG)
+///////////////////////////////////////////////////////
+
+model Membership {
+  id             String   @id @default(cuid())
+  userId         String
+  organizationId String
+  role           Role
+  createdAt      DateTime @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+}
+
+///////////////////////////////////////////////////////
+// WORKSPACE
+///////////////////////////////////////////////////////
+
+model Workspace {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization  Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  documents     Document[]
+  conversations Conversation[]
+
+  @@index([organizationId])
+}
+
+///////////////////////////////////////////////////////
+// DOCUMENTS
+///////////////////////////////////////////////////////
+
+model Document {
+  id             String    @id @default(cuid())
+  organizationId String
+  workspaceId    String
+  name           String
+  fileUrl        String
+  status         DocStatus @default(PENDING)
+  vectorized     Boolean   @default(false)
+  deletedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  workspace    Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  chunks       DocumentChunk[]
+
+  @@index([organizationId, status])
+  @@index([organizationId, deletedAt])
+}
+
+model DocumentChunk {
+  id             String @id @default(cuid())
+  documentId     String
+  organizationId String
+  content        String
+  tokenCount     Int
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+}
+
+///////////////////////////////////////////////////////
+// AI CHAT
+///////////////////////////////////////////////////////
+
+model Conversation {
+  id             String   @id @default(cuid())
+  organizationId String
+  workspaceId    String
+  createdBy      String
+  title          String?
+  createdAt      DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation("UserConversations", fields: [createdBy], references: [id])
+
+  messages Message[]
+
+  @@index([organizationId])
+  @@index([organizationId, workspaceId])
+}
+
+model Message {
+  id             String      @id @default(cuid())
+  conversationId String
+  role           MessageRole
+  content        String
+  sourceChunks   String[]
+  createdAt      DateTime    @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+}
+
+///////////////////////////////////////////////////////
+// AI USAGE (OBSERVABILITY)
+///////////////////////////////////////////////////////
+
+model AiUsage {
+  id               String   @id @default(cuid())
+  organizationId   String
+  userId           String
+  model            String
+  promptTokens     Int
+  completionTokens Int
+  latencyMs        Int
+  promptVersion    String?
+  error            String?
+  createdAt        DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, createdAt])
+}
