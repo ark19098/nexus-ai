@@ -10,10 +10,12 @@ export default {
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
   ],
+  secret: env.AUTH_SECRET,
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
   callbacks: {
     async signIn({ user }) {
+      console.log("[AUTH: SIGN-IN] User attempting login:", user.email);
       return true;
     },
     // Expose token data to the client

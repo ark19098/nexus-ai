@@ -35,9 +35,10 @@ export default auth((req) => {
     }
 
     // 2. If not logged in, kick them to home (or a login page)
-    if (!isLoggedIn) {
+    if (!isLoggedIn || !user) {
         return NextResponse.redirect(new URL("/", req.nextUrl));
     }
+    console.log(`🛡️ [MIDDLEWARE] User ${user?.email} (Org: ${user?.orgId || "LIMBO"}) accessing -> ${pathname}`)
 
     // 3. THE LIMBO STATE: If logged in but no orgId, force them to onboarding
     if (isLoggedIn && !user?.orgId && !isOnboardingRoute) {
@@ -51,14 +52,14 @@ export default auth((req) => {
         const urlOrgId = orgMatch[1];
 
         if (urlOrgId !== user?.orgId) {
-            return NextResponse.json({ error: "Forbidden - Tenant Mismatch" }, { status: 403 });
+            return NextResponse.redirect(new URL(`/org/${user.orgId}`, nextUrl));
         }
-        return NextResponse.redirect(new URL(`/org/${user.orgId}/dashboard`, nextUrl));
+        return NextResponse.next();
     }
 
     // Prevent fully set-up users from going backwards to public/onboarding pages
-    if (user && (isPublicRoute || isOnboardingRoute)) {
-        return NextResponse.redirect(new URL(`/org/${user.orgId}/dashboard`, nextUrl));
+    if (isPublicRoute || isOnboardingRoute) {
+        return NextResponse.redirect(new URL(`/org/${user.orgId}`, nextUrl));
     }
 
     // GUARD 5: AI ROUTE RATE LIMITING (Placeholder)
