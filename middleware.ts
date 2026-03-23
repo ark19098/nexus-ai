@@ -20,6 +20,7 @@ export default auth((req) => {
     const isApiAuthRoute = pathname.startsWith("/api/auth");
     const isStripeWebhook = pathname.startsWith("/api/stripe");
     const isWebhooks = pathname.startsWith("/api/webhooks");
+    const isInngestWebhook = pathname.startsWith("/api/inngest");
 
 
 
@@ -29,7 +30,8 @@ export default auth((req) => {
         isApiAuthRoute ||
         isOnboardingRoute ||
         isStripeWebhook ||
-        isWebhooks
+        isWebhooks ||
+        isInngestWebhook
     ) {
         return NextResponse.next();
     }
