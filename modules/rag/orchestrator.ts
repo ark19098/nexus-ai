@@ -1,10 +1,4 @@
 // modules/rag/orchestrator.ts
-// Master RAG pipeline orchestrator
-// Runs: query rewrite → dual retrieval → rerank → stream answer
-//
-// Two exports:
-//   runRAG()       → returns streaming ReadableStream (for chat UI)
-//   runRAGSync()   → returns full answer string (for testing/non-streaming)
 
 import { retrieveDual } from "./pipeline/retriever"
 import { rerank } from "./pipeline/reranker"
@@ -121,10 +115,6 @@ export async function runRAG(
   return { stream, chunks, metadata }
 }
 
-/**
- * Run RAG pipeline and return full answer string.
- * Used for testing, batch processing, or non-streaming contexts.
- */
 export async function runRAGSync(
   question: string,
   orgId: string,
@@ -142,3 +132,17 @@ export async function runRAGSync(
     metadata,
   }
 }
+
+
+// Master RAG pipeline orchestrator
+// Runs: query rewrite → dual retrieval → rerank → stream answer
+//
+// Two exports:
+//   runRAG()       → returns streaming ReadableStream (for chat UI)
+//   runRAGSync()   → returns full answer string (for testing/non-streaming)
+
+/**
+ * runRAGSync()
+ * Run RAG pipeline and return full answer string.
+ * Used for testing, batch processing, or non-streaming contexts.
+ */
