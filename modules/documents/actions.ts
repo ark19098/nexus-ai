@@ -6,6 +6,7 @@ import { revalidateTag } from "next/cache"
 import { createDocument } from "./services"
 import { CACHE_TAGS } from "@/core/redis/cache-tags"
 import { inngest } from "@/lib/inngest"
+import { VectorizationInput } from "../rag/types"
 
 const CreateDocumentSchema = z.object({
     fileName: z.string().min(1, "File name is required"),
@@ -38,14 +39,17 @@ export async function createDocumentAction(data: {
             organizationId: session.user.orgId,
             userId: session.user.id,
         })
+        console.log(document, 'DOC SAVED PRISMA');
 
         await inngest.send({
             name: "document/process",
             data: {
                 documentId: document.id,
                 orgId: session.user.orgId,
-                workspaceId: parsed.data.workspaceId
-            }
+                workspaceId: parsed.data.workspaceId,
+                fileKey: parsed.data.fileKey,
+                fileName: parsed.data.fileName,
+            } satisfies VectorizationInput
         });
 
         // 4. Invalidate document list cache — NOT router.refresh()

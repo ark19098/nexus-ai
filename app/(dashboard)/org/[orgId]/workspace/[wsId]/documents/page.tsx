@@ -42,7 +42,8 @@ export default async function DocumentsPage({
         ) : (
           <div className="border border-zinc-800 rounded-lg overflow-hidden">
             <ul className="divide-y divide-zinc-800">
-              {documents.map((doc: any) => (
+              {documents.map((doc: any) => {
+                return (
                 <li
                   key={doc.id}
                   className="flex items-center justify-between p-4 hover:bg-zinc-900/50 transition-colors"
@@ -58,7 +59,7 @@ export default async function DocumentsPage({
                       <div className="flex items-center gap-1 mt-0.5">
                         <Clock className="w-3 h-3 text-zinc-600" />
                         <p className="text-zinc-600 text-xs">
-                          {doc.createdAt.toLocaleDateString("en-IN", {
+                          {new Date(doc.createdAt).toLocaleDateString("en-IN", {
                             day: "numeric",
                             month: "short",
                             year: "numeric",
@@ -71,7 +72,7 @@ export default async function DocumentsPage({
                   {/* Status badge */}
                   <StatusBadge status={doc.status} />
                 </li>
-              ))}
+              )})}
             </ul>
           </div>
         )}
