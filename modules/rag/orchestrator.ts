@@ -73,8 +73,6 @@ async function runPipeline(
   const context = buildContext(finalChunks)
   const messages = buildMessages(question, context, history)
 
-  const durationMs = Date.now() - startTime
-
   return {
     messages,
     chunks: finalChunks,
@@ -83,8 +81,8 @@ async function runPipeline(
       rewrittenQuery,
       retrievedCount: retrieved.length,
       usedChunks:     finalChunks.length,
-      durationMs,
-    },
+      durationMs:     Date.now() - startTime,
+    } satisfies RAGResult["metadata"],
   }
 }
 
@@ -97,22 +95,26 @@ async function runPipeline(
  * Returns both the stream and the chunks used (for source citations).
  * The chat route sends chunks as a custom header or separate response.
  */
+export interface RunRAGResult {
+  stream:    ReadableStream<Uint8Array>
+  getUsage:  () => Promise<{ promptTokens: number; completionTokens: number }>
+  modelUsed: string
+  chunks:    RAGChunk[]
+  metadata:  RAGResult["metadata"]
+}
+
 export async function runRAG(
   question: string,
   orgId: string,
   history: HistoryMessage[] = []
-): Promise<{
-  stream: ReadableStream<Uint8Array>
-  chunks: RAGChunk[]
-  metadata: RAGResult["metadata"]
-}> {
+): Promise<RunRAGResult> {
   const { messages, chunks, metadata } = await runPipeline(question, orgId, history)
 
   console.log(`[RAG] Pipeline completed in ${metadata.durationMs}ms — streaming answer`)
 
-  const stream = await streamGroq(messages)
+  const { stream, getUsage, modelUsed } = await streamGroq(messages)
 
-  return { stream, chunks, metadata }
+  return { stream, getUsage, modelUsed, chunks, metadata };
 }
 
 export async function runRAGSync(

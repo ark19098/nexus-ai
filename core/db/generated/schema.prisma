@@ -89,12 +89,13 @@ model Session {
 ///////////////////////////////////////////////////////
 
 model Organization {
-  id               String   @id @default(cuid())
-  name             String
-  plan             Plan     @default(FREE)
-  tokenLimit       Int      @default(100000)
-  stripeCustomerId String?  @unique
-  createdAt        DateTime @default(now())
+  id                   String   @id @default(cuid())
+  name                 String
+  plan                 Plan     @default(FREE)
+  tokenLimit           Int      @default(100000)
+  stripeCustomerId     String?  @unique
+  stripeSubscriptionId String?  @unique
+  createdAt            DateTime @default(now())
 
   memberships Membership[]
   workspaces  Workspace[]
@@ -219,6 +220,8 @@ model AiUsage {
   promptTokens     Int
   completionTokens Int
   latencyMs        Int
+  totalTokens      Int
+  cost             Float
   promptVersion    String?
   error            String?
   createdAt        DateTime @default(now())

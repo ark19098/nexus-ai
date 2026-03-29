@@ -91,10 +91,31 @@ export async function callGroqPro(
  * Returns a ReadableStream of Server-Sent Events.
  * Compatible with Vercel AI SDK's useChat hook.
  */
+
+export interface StreamGroqResult {
+  stream:    ReadableStream<Uint8Array>
+  getUsage:  () => Promise<{ promptTokens: number; completionTokens: number }>
+  modelUsed: string
+}
+
 export async function streamGroq(
   messages: ChatMessage[],
   maxTokens = 2048
-): Promise<ReadableStream<Uint8Array>> {
+): Promise<StreamGroqResult> {
+  // Deferred promise — resolves when usage data arrives in SSE stream
+  let resolveUsage!: (usage: { promptTokens: number; completionTokens: number }) => void;
+  let rejectUsage!: (error: Error) => void;
+
+  const usagePromise = new Promise<{ promptTokens: number; completionTokens: number }>((resolve, reject) => {
+    resolveUsage = resolve;
+    rejectUsage = reject;
+  });
+
+  // Set a fallback timeout — if Groq never sends usage data, resolve with zeros (Prevents getUsage() from hanging indefinitely)
+  const usageTimeout = setTimeout(() => {
+    resolveUsage({ promptTokens: 0, completionTokens: 0 })
+  }, 30_000)  
+
   const response = await fetch(GROQ_API_URL, {
     method: "POST",
     headers: {
@@ -107,15 +128,20 @@ export async function streamGroq(
       temperature: 0,
       max_tokens: maxTokens,
       stream: true,
+      stream_options: { include_usage: true},
     }),
   })
 
   if (!response.ok) {
+    clearTimeout(usageTimeout)
     const error = await response.text()
+    rejectUsage(new Error(`Groq streaming error: ${response.status} — ${error}`))
     throw new Error(`Groq streaming error: ${response.status} — ${error}`)
   }
 
   if (!response.body) {
+    clearTimeout(usageTimeout)
+    rejectUsage(new Error("Groq returned no response body"))
     throw new Error("Groq returned no response body for streaming request")
   }
 
@@ -131,10 +157,26 @@ export async function streamGroq(
 
       for (const line of lines) {
         const data = line.slice(6).trim()
-        if (data === "[DONE]") return
+
+        if (data === "[DONE]") {
+          clearTimeout(usageTimeout)
+          resolveUsage({ promptTokens: 0, completionTokens: 0 })
+          return
+        }
 
         try {
           const parsed = JSON.parse(data)
+
+          // Extract usage from final chunk (Groq sends usage before [DONE])
+          if (parsed.usage) {
+            clearTimeout(usageTimeout)
+            resolveUsage({
+              promptTokens:     parsed.usage.prompt_tokens     ?? 0,
+              completionTokens: parsed.usage.completion_tokens ?? 0,
+            })
+          }
+
+          // Extract and forward text delta to client
           const delta = parsed.choices?.[0]?.delta?.content
           if (delta) {
             controller.enqueue(encoder.encode(delta))
@@ -144,7 +186,16 @@ export async function streamGroq(
         }
       }
     },
+    flush() {
+      // Stream ended — ensure usage promise is resolved
+      clearTimeout(usageTimeout)
+      resolveUsage({ promptTokens: 0, completionTokens: 0 })
+    },
   })
 
-  return response.body.pipeThrough(transformStream)
+  return {
+    stream: response.body.pipeThrough(transformStream),
+    getUsage: () => usagePromise,
+    modelUsed: MODEL_PRO,
+  }
 }

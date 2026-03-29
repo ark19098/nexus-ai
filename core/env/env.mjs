@@ -35,6 +35,9 @@ export const env = createEnv({
         FINAL_K: z.string().default("10"),
         CHUNK_SIZE: z.string().default("1000"),
         CHUNK_OVERLAP: z.string().default("200"),
+
+        STRIPE_SECRET_KEY: z.string().min(1),
+        STRIPE_WEBHOOK_SECRET: z.string().min(1),
     },
     client: {
         NEXT_PUBLIC_APP_URL: z.string().url(),
@@ -74,5 +77,8 @@ export const env = createEnv({
         FINAL_K: process.env.FINAL_K,
         CHUNK_SIZE: process.env.CHUNK_SIZE,
         CHUNK_OVERLAP: process.env.CHUNK_OVERLAP,
+
+        STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+        STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     },
   });

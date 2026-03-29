@@ -1,5 +1,8 @@
 import { auth } from "@/core/auth/config";
 import { prisma } from "@/core/db/client";
+import { inngest } from "@/lib/inngest";
+import { checkTokenLimit } from "@/modules/observability/queries";
+import { recordAiUsage } from "@/modules/observability/services";
 import { runRAG } from "@/modules/rag/orchestrator";
 import { HistoryMessage } from "@/modules/rag/types";
 import { NextRequest, NextResponse } from "next/server";
@@ -14,95 +17,164 @@ export const runtime = "nodejs"
 export const maxDuration = 60
 
 export async function POST(request: NextRequest) {
-    try {
-        const session = await auth();
+    const startTime = Date.now();
 
-        if (!session?.user?.id || !session?.user?.orgId) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-        }
+    const session = await auth();
 
-        const { orgId, id: userId } = session.user;
+    if (!session?.user?.id || !session?.user?.orgId) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
 
-        const body = await request.json();
-        const {
-            question,
-            conversationId,
-            history = [],
-        }: RequestBody = body;
+    const { orgId, id: userId } = session.user;
 
-        if (!question || typeof question !== "string" || question.trim().length === 0) {
-            return NextResponse.json({ error: "Question is required" }, { status: 400 })
-        }
+    const body = await request.json().catch(() => null);
 
-        if (question.length > 2000) {
-            return NextResponse.json(
-                { error: "Question too long — maximum 2000 characters" },
-                { status: 400 }
-            );
-        }
+    if (!body) {
+        return NextResponse.json({ error: "Invalid request body" }, { status: 400 })
+    }
 
-        // Save user message to DB
-        // Save before running RAG so conversation history is persisted even if streaming fails
-        if (conversationId) {
-            await prisma.message.create({
-                data: {
-                    conversationId,
-                    role: "user",
-                    content: question,
-                    sourceChunks: [],
-                }
-            });
-        }
+    const {
+        question,
+        conversationId,
+        history = [],
+    }: RequestBody = body;
 
-        // Run RAG pipeline
-        const { chunks, metadata, stream } = await runRAG(question, orgId, history);
+    if (!question.trim()) {
+        return NextResponse.json({ error: "Question is required" }, { status: 400 })
+    }
 
-        const chunkIds = chunks.map((chunk) => chunk.id);
-
-        console.log(
-            `[CHAT] RAG pipeline: ${metadata.retrievedCount} retrieved → ${metadata.usedChunks} used | ${metadata.durationMs}ms`
+    if (question.length > 2000) {
+        return NextResponse.json(
+            { error: "Question too long — maximum 2000 characters" },
+            { status: 400 }
         );
+    }
 
-        // Save assistant message + stream response
-        const [streamForClient, streamForDB] = stream.tee();
-        
+    // Token limit enforcement (Check BEFORE running RAG — don't waste compute on over-limit orgs)
+    const tokenStatus = await checkTokenLimit(orgId);
 
-        // Capture full response in background for DB persistence
-        if (conversationId) {
-            captureAndSaveResponse(streamForDB, conversationId, chunkIds)
-                .catch((err) => console.error("[CHAT] Failed to save assistant message:", err));
-        }
+    if (tokenStatus.isExceeded) {
+        return NextResponse.json(
+        {
+            error: `Monthly token limit reached (${tokenStatus.used.toLocaleString()} / ${tokenStatus.limit.toLocaleString()} tokens). Upgrade your plan to continue.`,
+            code: "TOKEN_LIMIT_EXCEEDED",
+        },
+        { status: 429 }
+        );
+    }
 
-        // Build streaming response
-        const chunkSources = chunks.map((c) => ({
-            id:         c.id,
-            fileName:   c.metadata.fileName,
-            chunkIndex: c.metadata.chunkIndex,
-            content:    c.content.slice(0, 300), // preview only
-        }));
+    // Save user message to DB before running RAG so conversation history is persisted even if streaming fails
+    if (conversationId) {
+        await prisma.message.create({
+            data: {
+                conversationId,
+                role: "user",
+                content: question,
+                sourceChunks: [],
+            }
+        }).catch((err) => {
+            // Non-fatal — message persistence failure shouldn't block the response
+            console.error("[CHAT] Failed to save user message:", err)
+        });
+    }
 
-        return new Response(streamForClient, {
-            headers: {
-                "Content-Type":          "text/plain; charset=utf-8",
-                "Transfer-Encoding":     "chunked",
-                // Pass RAG metadata to client via headers
-                "X-RAG-Chunk-Ids":      JSON.stringify(chunkIds),
-                "X-RAG-Sources":        encodeURIComponent(JSON.stringify(chunkSources)),
-                "X-RAG-Retrieved":      metadata.retrievedCount.toString(),
-                "X-RAG-Used":           metadata.usedChunks.toString(),
-                "X-RAG-Duration-Ms":    metadata.durationMs.toString(),
-                "X-RAG-Rewritten-Query": encodeURIComponent(metadata.rewrittenQuery),
-            },
+    // Run RAG pipeline
+    let ragResult: Awaited<ReturnType<typeof runRAG>>;
+
+    try {
+        ragResult = await runRAG(question, orgId, history);
+    } catch (err) {
+        console.error("[CHAT] RAG pipeline failed:", err);
+
+        // Record failed call for observability
+        void recordAiUsage({
+            orgId,
+            userId,
+            model:            process.env.GROQ_MODEL_PRO ?? "llama-3.3-70b-versatile",
+            promptTokens:     0,
+            completionTokens: 0,
+            latencyMs:        Date.now() - startTime,
+            error:            err instanceof Error ? err.message : "Unknown RAG error",
         });
 
-    } catch (error) {
-        console.error("[CHAT] RAG pipeline error:", error);
- 
         return NextResponse.json(
             { error: "Failed to generate response. Please try again." },
             { status: 500 }
         );
+
     }
+    const { chunks, metadata, stream, getUsage, modelUsed } = ragResult;
+
+    const chunkIds = chunks.map((chunk) => chunk.id);
+
+    // console.log(
+    //     `[CHAT] RAG pipeline: ${metadata.retrievedCount} retrieved → ${metadata.usedChunks} used | ${metadata.durationMs}ms`
+    // );
+
+    // Save assistant message + stream response
+    const [streamForClient, streamForDB] = stream.tee();
+
+    // ── Fire-and-forget observability ───────── (Does NOT block the streaming response)
+    // getUsage() resolves when Groq emits its final usage chunk
+    void (async () => {
+        try {
+            const { promptTokens, completionTokens } = await getUsage();
+
+            await recordAiUsage({
+                orgId,
+                userId,
+                model:            modelUsed,
+                promptTokens,
+                completionTokens,
+                latencyMs:        Date.now() - startTime,
+            });
+
+            // Fire usage alert if org is approaching limit
+            if (tokenStatus.isNearLimit || tokenStatus.percentUsed >= 80) {
+                await inngest.send({
+                    name: "org/usage-alert",
+                    data: {
+                        orgId,
+                        percentUsed:  tokenStatus.percentUsed,
+                        used:         tokenStatus.used,
+                        limit:        tokenStatus.limit,
+                    },
+                });
+            }
+        } catch (err) {
+            // Silent — observability must never affect user experience
+            console.error("[CHAT] Fire-and-forget observability failed:", err)
+        }
+    })();
+
+
+    // Capture full response in background for DB persistence
+    if (conversationId) {
+        captureAndSaveResponse(streamForDB, conversationId, chunkIds)
+            .catch((err) => console.error("[CHAT] Failed to save assistant message:", err));
+    }
+
+    const sourcesPayload = chunks.map((c) => ({
+        id:         c.id,
+        fileName:   c.metadata.fileName,
+        chunkIndex: c.metadata.chunkIndex,
+        content:    c.content.slice(0, 300), // preview only
+    }));
+
+    // Stream response to client
+    return new Response(streamForClient, {
+        headers: {
+            "Content-Type":          "text/plain; charset=utf-8",
+            "Transfer-Encoding":     "chunked",
+            // Pass RAG metadata to client via headers
+            "X-RAG-Chunk-Ids":      JSON.stringify(chunkIds),
+            "X-RAG-Sources":        encodeURIComponent(JSON.stringify(sourcesPayload)),
+            "X-RAG-Retrieved":      metadata.retrievedCount.toString(),
+            "X-RAG-Used":           metadata.usedChunks.toString(),
+            "X-RAG-Duration-Ms":    metadata.durationMs.toString(),
+            "X-RAG-Rewritten-Query": encodeURIComponent(metadata.rewrittenQuery),
+        },
+    });
 }
 
 async function captureAndSaveResponse(

@@ -5538,6 +5538,7 @@ export namespace Prisma {
     plan: $Enums.Plan | null
     tokenLimit: number | null
     stripeCustomerId: string | null
+    stripeSubscriptionId: string | null
     createdAt: Date | null
   }
 
@@ -5547,6 +5548,7 @@ export namespace Prisma {
     plan: $Enums.Plan | null
     tokenLimit: number | null
     stripeCustomerId: string | null
+    stripeSubscriptionId: string | null
     createdAt: Date | null
   }
 
@@ -5556,6 +5558,7 @@ export namespace Prisma {
     plan: number
     tokenLimit: number
     stripeCustomerId: number
+    stripeSubscriptionId: number
     createdAt: number
     _all: number
   }
@@ -5575,6 +5578,7 @@ export namespace Prisma {
     plan?: true
     tokenLimit?: true
     stripeCustomerId?: true
+    stripeSubscriptionId?: true
     createdAt?: true
   }
 
@@ -5584,6 +5588,7 @@ export namespace Prisma {
     plan?: true
     tokenLimit?: true
     stripeCustomerId?: true
+    stripeSubscriptionId?: true
     createdAt?: true
   }
 
@@ -5593,6 +5598,7 @@ export namespace Prisma {
     plan?: true
     tokenLimit?: true
     stripeCustomerId?: true
+    stripeSubscriptionId?: true
     createdAt?: true
     _all?: true
   }
@@ -5689,6 +5695,7 @@ export namespace Prisma {
     plan: $Enums.Plan
     tokenLimit: number
     stripeCustomerId: string | null
+    stripeSubscriptionId: string | null
     createdAt: Date
     _count: OrganizationCountAggregateOutputType | null
     _avg: OrganizationAvgAggregateOutputType | null
@@ -5717,6 +5724,7 @@ export namespace Prisma {
     plan?: boolean
     tokenLimit?: boolean
     stripeCustomerId?: boolean
+    stripeSubscriptionId?: boolean
     createdAt?: boolean
     memberships?: boolean | Organization$membershipsArgs<ExtArgs>
     workspaces?: boolean | Organization$workspacesArgs<ExtArgs>
@@ -5731,6 +5739,7 @@ export namespace Prisma {
     plan?: boolean
     tokenLimit?: boolean
     stripeCustomerId?: boolean
+    stripeSubscriptionId?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["organization"]>
 
@@ -5740,6 +5749,7 @@ export namespace Prisma {
     plan?: boolean
     tokenLimit?: boolean
     stripeCustomerId?: boolean
+    stripeSubscriptionId?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["organization"]>
 
@@ -5749,10 +5759,11 @@ export namespace Prisma {
     plan?: boolean
     tokenLimit?: boolean
     stripeCustomerId?: boolean
+    stripeSubscriptionId?: boolean
     createdAt?: boolean
   }
 
-  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "plan" | "tokenLimit" | "stripeCustomerId" | "createdAt", ExtArgs["result"]["organization"]>
+  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "plan" | "tokenLimit" | "stripeCustomerId" | "stripeSubscriptionId" | "createdAt", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     memberships?: boolean | Organization$membershipsArgs<ExtArgs>
     workspaces?: boolean | Organization$workspacesArgs<ExtArgs>
@@ -5777,6 +5788,7 @@ export namespace Prisma {
       plan: $Enums.Plan
       tokenLimit: number
       stripeCustomerId: string | null
+      stripeSubscriptionId: string | null
       createdAt: Date
     }, ExtArgs["result"]["organization"]>
     composites: {}
@@ -6210,6 +6222,7 @@ export namespace Prisma {
     readonly plan: FieldRef<"Organization", 'Plan'>
     readonly tokenLimit: FieldRef<"Organization", 'Int'>
     readonly stripeCustomerId: FieldRef<"Organization", 'String'>
+    readonly stripeSubscriptionId: FieldRef<"Organization", 'String'>
     readonly createdAt: FieldRef<"Organization", 'DateTime'>
   }
     
@@ -13375,12 +13388,16 @@ export namespace Prisma {
     promptTokens: number | null
     completionTokens: number | null
     latencyMs: number | null
+    totalTokens: number | null
+    cost: number | null
   }
 
   export type AiUsageSumAggregateOutputType = {
     promptTokens: number | null
     completionTokens: number | null
     latencyMs: number | null
+    totalTokens: number | null
+    cost: number | null
   }
 
   export type AiUsageMinAggregateOutputType = {
@@ -13391,6 +13408,8 @@ export namespace Prisma {
     promptTokens: number | null
     completionTokens: number | null
     latencyMs: number | null
+    totalTokens: number | null
+    cost: number | null
     promptVersion: string | null
     error: string | null
     createdAt: Date | null
@@ -13404,6 +13423,8 @@ export namespace Prisma {
     promptTokens: number | null
     completionTokens: number | null
     latencyMs: number | null
+    totalTokens: number | null
+    cost: number | null
     promptVersion: string | null
     error: string | null
     createdAt: Date | null
@@ -13417,6 +13438,8 @@ export namespace Prisma {
     promptTokens: number
     completionTokens: number
     latencyMs: number
+    totalTokens: number
+    cost: number
     promptVersion: number
     error: number
     createdAt: number
@@ -13428,12 +13451,16 @@ export namespace Prisma {
     promptTokens?: true
     completionTokens?: true
     latencyMs?: true
+    totalTokens?: true
+    cost?: true
   }
 
   export type AiUsageSumAggregateInputType = {
     promptTokens?: true
     completionTokens?: true
     latencyMs?: true
+    totalTokens?: true
+    cost?: true
   }
 
   export type AiUsageMinAggregateInputType = {
@@ -13444,6 +13471,8 @@ export namespace Prisma {
     promptTokens?: true
     completionTokens?: true
     latencyMs?: true
+    totalTokens?: true
+    cost?: true
     promptVersion?: true
     error?: true
     createdAt?: true
@@ -13457,6 +13486,8 @@ export namespace Prisma {
     promptTokens?: true
     completionTokens?: true
     latencyMs?: true
+    totalTokens?: true
+    cost?: true
     promptVersion?: true
     error?: true
     createdAt?: true
@@ -13470,6 +13501,8 @@ export namespace Prisma {
     promptTokens?: true
     completionTokens?: true
     latencyMs?: true
+    totalTokens?: true
+    cost?: true
     promptVersion?: true
     error?: true
     createdAt?: true
@@ -13570,6 +13603,8 @@ export namespace Prisma {
     promptTokens: number
     completionTokens: number
     latencyMs: number
+    totalTokens: number
+    cost: number
     promptVersion: string | null
     error: string | null
     createdAt: Date
@@ -13602,6 +13637,8 @@ export namespace Prisma {
     promptTokens?: boolean
     completionTokens?: boolean
     latencyMs?: boolean
+    totalTokens?: boolean
+    cost?: boolean
     promptVersion?: boolean
     error?: boolean
     createdAt?: boolean
@@ -13617,6 +13654,8 @@ export namespace Prisma {
     promptTokens?: boolean
     completionTokens?: boolean
     latencyMs?: boolean
+    totalTokens?: boolean
+    cost?: boolean
     promptVersion?: boolean
     error?: boolean
     createdAt?: boolean
@@ -13632,6 +13671,8 @@ export namespace Prisma {
     promptTokens?: boolean
     completionTokens?: boolean
     latencyMs?: boolean
+    totalTokens?: boolean
+    cost?: boolean
     promptVersion?: boolean
     error?: boolean
     createdAt?: boolean
@@ -13647,12 +13688,14 @@ export namespace Prisma {
     promptTokens?: boolean
     completionTokens?: boolean
     latencyMs?: boolean
+    totalTokens?: boolean
+    cost?: boolean
     promptVersion?: boolean
     error?: boolean
     createdAt?: boolean
   }
 
-  export type AiUsageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "userId" | "model" | "promptTokens" | "completionTokens" | "latencyMs" | "promptVersion" | "error" | "createdAt", ExtArgs["result"]["aiUsage"]>
+  export type AiUsageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "userId" | "model" | "promptTokens" | "completionTokens" | "latencyMs" | "totalTokens" | "cost" | "promptVersion" | "error" | "createdAt", ExtArgs["result"]["aiUsage"]>
   export type AiUsageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -13680,6 +13723,8 @@ export namespace Prisma {
       promptTokens: number
       completionTokens: number
       latencyMs: number
+      totalTokens: number
+      cost: number
       promptVersion: string | null
       error: string | null
       createdAt: Date
@@ -14115,6 +14160,8 @@ export namespace Prisma {
     readonly promptTokens: FieldRef<"AiUsage", 'Int'>
     readonly completionTokens: FieldRef<"AiUsage", 'Int'>
     readonly latencyMs: FieldRef<"AiUsage", 'Int'>
+    readonly totalTokens: FieldRef<"AiUsage", 'Int'>
+    readonly cost: FieldRef<"AiUsage", 'Float'>
     readonly promptVersion: FieldRef<"AiUsage", 'String'>
     readonly error: FieldRef<"AiUsage", 'String'>
     readonly createdAt: FieldRef<"AiUsage", 'DateTime'>
@@ -14598,6 +14645,7 @@ export namespace Prisma {
     plan: 'plan',
     tokenLimit: 'tokenLimit',
     stripeCustomerId: 'stripeCustomerId',
+    stripeSubscriptionId: 'stripeSubscriptionId',
     createdAt: 'createdAt'
   };
 
@@ -14685,6 +14733,8 @@ export namespace Prisma {
     promptTokens: 'promptTokens',
     completionTokens: 'completionTokens',
     latencyMs: 'latencyMs',
+    totalTokens: 'totalTokens',
+    cost: 'cost',
     promptVersion: 'promptVersion',
     error: 'error',
     createdAt: 'createdAt'
@@ -15073,6 +15123,7 @@ export namespace Prisma {
     plan?: EnumPlanFilter<"Organization"> | $Enums.Plan
     tokenLimit?: IntFilter<"Organization"> | number
     stripeCustomerId?: StringNullableFilter<"Organization"> | string | null
+    stripeSubscriptionId?: StringNullableFilter<"Organization"> | string | null
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     memberships?: MembershipListRelationFilter
     workspaces?: WorkspaceListRelationFilter
@@ -15086,6 +15137,7 @@ export namespace Prisma {
     plan?: SortOrder
     tokenLimit?: SortOrder
     stripeCustomerId?: SortOrderInput | SortOrder
+    stripeSubscriptionId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     memberships?: MembershipOrderByRelationAggregateInput
     workspaces?: WorkspaceOrderByRelationAggregateInput
@@ -15096,6 +15148,7 @@ export namespace Prisma {
   export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     stripeCustomerId?: string
+    stripeSubscriptionId?: string
     AND?: OrganizationWhereInput | OrganizationWhereInput[]
     OR?: OrganizationWhereInput[]
     NOT?: OrganizationWhereInput | OrganizationWhereInput[]
@@ -15107,7 +15160,7 @@ export namespace Prisma {
     workspaces?: WorkspaceListRelationFilter
     documents?: DocumentListRelationFilter
     aiUsage?: AiUsageListRelationFilter
-  }, "id" | "stripeCustomerId">
+  }, "id" | "stripeCustomerId" | "stripeSubscriptionId">
 
   export type OrganizationOrderByWithAggregationInput = {
     id?: SortOrder
@@ -15115,6 +15168,7 @@ export namespace Prisma {
     plan?: SortOrder
     tokenLimit?: SortOrder
     stripeCustomerId?: SortOrderInput | SortOrder
+    stripeSubscriptionId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: OrganizationCountOrderByAggregateInput
     _avg?: OrganizationAvgOrderByAggregateInput
@@ -15132,6 +15186,7 @@ export namespace Prisma {
     plan?: EnumPlanWithAggregatesFilter<"Organization"> | $Enums.Plan
     tokenLimit?: IntWithAggregatesFilter<"Organization"> | number
     stripeCustomerId?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    stripeSubscriptionId?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
   }
 
@@ -15535,6 +15590,8 @@ export namespace Prisma {
     promptTokens?: IntFilter<"AiUsage"> | number
     completionTokens?: IntFilter<"AiUsage"> | number
     latencyMs?: IntFilter<"AiUsage"> | number
+    totalTokens?: IntFilter<"AiUsage"> | number
+    cost?: FloatFilter<"AiUsage"> | number
     promptVersion?: StringNullableFilter<"AiUsage"> | string | null
     error?: StringNullableFilter<"AiUsage"> | string | null
     createdAt?: DateTimeFilter<"AiUsage"> | Date | string
@@ -15550,6 +15607,8 @@ export namespace Prisma {
     promptTokens?: SortOrder
     completionTokens?: SortOrder
     latencyMs?: SortOrder
+    totalTokens?: SortOrder
+    cost?: SortOrder
     promptVersion?: SortOrderInput | SortOrder
     error?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -15568,6 +15627,8 @@ export namespace Prisma {
     promptTokens?: IntFilter<"AiUsage"> | number
     completionTokens?: IntFilter<"AiUsage"> | number
     latencyMs?: IntFilter<"AiUsage"> | number
+    totalTokens?: IntFilter<"AiUsage"> | number
+    cost?: FloatFilter<"AiUsage"> | number
     promptVersion?: StringNullableFilter<"AiUsage"> | string | null
     error?: StringNullableFilter<"AiUsage"> | string | null
     createdAt?: DateTimeFilter<"AiUsage"> | Date | string
@@ -15583,6 +15644,8 @@ export namespace Prisma {
     promptTokens?: SortOrder
     completionTokens?: SortOrder
     latencyMs?: SortOrder
+    totalTokens?: SortOrder
+    cost?: SortOrder
     promptVersion?: SortOrderInput | SortOrder
     error?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -15604,6 +15667,8 @@ export namespace Prisma {
     promptTokens?: IntWithAggregatesFilter<"AiUsage"> | number
     completionTokens?: IntWithAggregatesFilter<"AiUsage"> | number
     latencyMs?: IntWithAggregatesFilter<"AiUsage"> | number
+    totalTokens?: IntWithAggregatesFilter<"AiUsage"> | number
+    cost?: FloatWithAggregatesFilter<"AiUsage"> | number
     promptVersion?: StringNullableWithAggregatesFilter<"AiUsage"> | string | null
     error?: StringNullableWithAggregatesFilter<"AiUsage"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"AiUsage"> | Date | string
@@ -15857,6 +15922,7 @@ export namespace Prisma {
     plan?: $Enums.Plan
     tokenLimit?: number
     stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
     createdAt?: Date | string
     memberships?: MembershipCreateNestedManyWithoutOrganizationInput
     workspaces?: WorkspaceCreateNestedManyWithoutOrganizationInput
@@ -15870,6 +15936,7 @@ export namespace Prisma {
     plan?: $Enums.Plan
     tokenLimit?: number
     stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
     createdAt?: Date | string
     memberships?: MembershipUncheckedCreateNestedManyWithoutOrganizationInput
     workspaces?: WorkspaceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15883,6 +15950,7 @@ export namespace Prisma {
     plan?: EnumPlanFieldUpdateOperationsInput | $Enums.Plan
     tokenLimit?: IntFieldUpdateOperationsInput | number
     stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     memberships?: MembershipUpdateManyWithoutOrganizationNestedInput
     workspaces?: WorkspaceUpdateManyWithoutOrganizationNestedInput
@@ -15896,6 +15964,7 @@ export namespace Prisma {
     plan?: EnumPlanFieldUpdateOperationsInput | $Enums.Plan
     tokenLimit?: IntFieldUpdateOperationsInput | number
     stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     memberships?: MembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     workspaces?: WorkspaceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15909,6 +15978,7 @@ export namespace Prisma {
     plan?: $Enums.Plan
     tokenLimit?: number
     stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
     createdAt?: Date | string
   }
 
@@ -15918,6 +15988,7 @@ export namespace Prisma {
     plan?: EnumPlanFieldUpdateOperationsInput | $Enums.Plan
     tokenLimit?: IntFieldUpdateOperationsInput | number
     stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -15927,6 +15998,7 @@ export namespace Prisma {
     plan?: EnumPlanFieldUpdateOperationsInput | $Enums.Plan
     tokenLimit?: IntFieldUpdateOperationsInput | number
     stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -16328,6 +16400,8 @@ export namespace Prisma {
     promptTokens: number
     completionTokens: number
     latencyMs: number
+    totalTokens: number
+    cost: number
     promptVersion?: string | null
     error?: string | null
     createdAt?: Date | string
@@ -16343,6 +16417,8 @@ export namespace Prisma {
     promptTokens: number
     completionTokens: number
     latencyMs: number
+    totalTokens: number
+    cost: number
     promptVersion?: string | null
     error?: string | null
     createdAt?: Date | string
@@ -16354,6 +16430,8 @@ export namespace Prisma {
     promptTokens?: IntFieldUpdateOperationsInput | number
     completionTokens?: IntFieldUpdateOperationsInput | number
     latencyMs?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    cost?: FloatFieldUpdateOperationsInput | number
     promptVersion?: NullableStringFieldUpdateOperationsInput | string | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16369,6 +16447,8 @@ export namespace Prisma {
     promptTokens?: IntFieldUpdateOperationsInput | number
     completionTokens?: IntFieldUpdateOperationsInput | number
     latencyMs?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    cost?: FloatFieldUpdateOperationsInput | number
     promptVersion?: NullableStringFieldUpdateOperationsInput | string | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16382,6 +16462,8 @@ export namespace Prisma {
     promptTokens: number
     completionTokens: number
     latencyMs: number
+    totalTokens: number
+    cost: number
     promptVersion?: string | null
     error?: string | null
     createdAt?: Date | string
@@ -16393,6 +16475,8 @@ export namespace Prisma {
     promptTokens?: IntFieldUpdateOperationsInput | number
     completionTokens?: IntFieldUpdateOperationsInput | number
     latencyMs?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    cost?: FloatFieldUpdateOperationsInput | number
     promptVersion?: NullableStringFieldUpdateOperationsInput | string | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16406,6 +16490,8 @@ export namespace Prisma {
     promptTokens?: IntFieldUpdateOperationsInput | number
     completionTokens?: IntFieldUpdateOperationsInput | number
     latencyMs?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    cost?: FloatFieldUpdateOperationsInput | number
     promptVersion?: NullableStringFieldUpdateOperationsInput | string | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16767,6 +16853,7 @@ export namespace Prisma {
     plan?: SortOrder
     tokenLimit?: SortOrder
     stripeCustomerId?: SortOrder
+    stripeSubscriptionId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -16780,6 +16867,7 @@ export namespace Prisma {
     plan?: SortOrder
     tokenLimit?: SortOrder
     stripeCustomerId?: SortOrder
+    stripeSubscriptionId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -16789,6 +16877,7 @@ export namespace Prisma {
     plan?: SortOrder
     tokenLimit?: SortOrder
     stripeCustomerId?: SortOrder
+    stripeSubscriptionId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -17110,6 +17199,17 @@ export namespace Prisma {
     _max?: NestedEnumMessageRoleFilter<$PrismaModel>
   }
 
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type AiUsageCountOrderByAggregateInput = {
     id?: SortOrder
     organizationId?: SortOrder
@@ -17118,6 +17218,8 @@ export namespace Prisma {
     promptTokens?: SortOrder
     completionTokens?: SortOrder
     latencyMs?: SortOrder
+    totalTokens?: SortOrder
+    cost?: SortOrder
     promptVersion?: SortOrder
     error?: SortOrder
     createdAt?: SortOrder
@@ -17127,6 +17229,8 @@ export namespace Prisma {
     promptTokens?: SortOrder
     completionTokens?: SortOrder
     latencyMs?: SortOrder
+    totalTokens?: SortOrder
+    cost?: SortOrder
   }
 
   export type AiUsageMaxOrderByAggregateInput = {
@@ -17137,6 +17241,8 @@ export namespace Prisma {
     promptTokens?: SortOrder
     completionTokens?: SortOrder
     latencyMs?: SortOrder
+    totalTokens?: SortOrder
+    cost?: SortOrder
     promptVersion?: SortOrder
     error?: SortOrder
     createdAt?: SortOrder
@@ -17150,6 +17256,8 @@ export namespace Prisma {
     promptTokens?: SortOrder
     completionTokens?: SortOrder
     latencyMs?: SortOrder
+    totalTokens?: SortOrder
+    cost?: SortOrder
     promptVersion?: SortOrder
     error?: SortOrder
     createdAt?: SortOrder
@@ -17159,6 +17267,24 @@ export namespace Prisma {
     promptTokens?: SortOrder
     completionTokens?: SortOrder
     latencyMs?: SortOrder
+    totalTokens?: SortOrder
+    cost?: SortOrder
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type AccountCreateNestedManyWithoutUserInput = {
@@ -17934,6 +18060,14 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type OrganizationUpdateOneRequiredWithoutAiUsageNestedInput = {
     create?: XOR<OrganizationCreateWithoutAiUsageInput, OrganizationUncheckedCreateWithoutAiUsageInput>
     connectOrCreate?: OrganizationCreateOrConnectWithoutAiUsageInput
@@ -18219,6 +18353,22 @@ export namespace Prisma {
     _max?: NestedEnumMessageRoleFilter<$PrismaModel>
   }
 
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
   export type AccountCreateWithoutUserInput = {
     type: string
     provider: string
@@ -18309,6 +18459,8 @@ export namespace Prisma {
     promptTokens: number
     completionTokens: number
     latencyMs: number
+    totalTokens: number
+    cost: number
     promptVersion?: string | null
     error?: string | null
     createdAt?: Date | string
@@ -18322,6 +18474,8 @@ export namespace Prisma {
     promptTokens: number
     completionTokens: number
     latencyMs: number
+    totalTokens: number
+    cost: number
     promptVersion?: string | null
     error?: string | null
     createdAt?: Date | string
@@ -18479,6 +18633,8 @@ export namespace Prisma {
     promptTokens?: IntFilter<"AiUsage"> | number
     completionTokens?: IntFilter<"AiUsage"> | number
     latencyMs?: IntFilter<"AiUsage"> | number
+    totalTokens?: IntFilter<"AiUsage"> | number
+    cost?: FloatFilter<"AiUsage"> | number
     promptVersion?: StringNullableFilter<"AiUsage"> | string | null
     error?: StringNullableFilter<"AiUsage"> | string | null
     createdAt?: DateTimeFilter<"AiUsage"> | Date | string
@@ -18750,6 +18906,8 @@ export namespace Prisma {
     promptTokens: number
     completionTokens: number
     latencyMs: number
+    totalTokens: number
+    cost: number
     promptVersion?: string | null
     error?: string | null
     createdAt?: Date | string
@@ -18763,6 +18921,8 @@ export namespace Prisma {
     promptTokens: number
     completionTokens: number
     latencyMs: number
+    totalTokens: number
+    cost: number
     promptVersion?: string | null
     error?: string | null
     createdAt?: Date | string
@@ -18908,6 +19068,7 @@ export namespace Prisma {
     plan?: $Enums.Plan
     tokenLimit?: number
     stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
     createdAt?: Date | string
     workspaces?: WorkspaceCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
@@ -18920,6 +19081,7 @@ export namespace Prisma {
     plan?: $Enums.Plan
     tokenLimit?: number
     stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
     createdAt?: Date | string
     workspaces?: WorkspaceUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18987,6 +19149,7 @@ export namespace Prisma {
     plan?: EnumPlanFieldUpdateOperationsInput | $Enums.Plan
     tokenLimit?: IntFieldUpdateOperationsInput | number
     stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspaces?: WorkspaceUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
@@ -18999,6 +19162,7 @@ export namespace Prisma {
     plan?: EnumPlanFieldUpdateOperationsInput | $Enums.Plan
     tokenLimit?: IntFieldUpdateOperationsInput | number
     stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspaces?: WorkspaceUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19011,6 +19175,7 @@ export namespace Prisma {
     plan?: $Enums.Plan
     tokenLimit?: number
     stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
     createdAt?: Date | string
     memberships?: MembershipCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
@@ -19023,6 +19188,7 @@ export namespace Prisma {
     plan?: $Enums.Plan
     tokenLimit?: number
     stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
     createdAt?: Date | string
     memberships?: MembershipUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19115,6 +19281,7 @@ export namespace Prisma {
     plan?: EnumPlanFieldUpdateOperationsInput | $Enums.Plan
     tokenLimit?: IntFieldUpdateOperationsInput | number
     stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     memberships?: MembershipUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
@@ -19127,6 +19294,7 @@ export namespace Prisma {
     plan?: EnumPlanFieldUpdateOperationsInput | $Enums.Plan
     tokenLimit?: IntFieldUpdateOperationsInput | number
     stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     memberships?: MembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19194,6 +19362,7 @@ export namespace Prisma {
     plan?: $Enums.Plan
     tokenLimit?: number
     stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
     createdAt?: Date | string
     memberships?: MembershipCreateNestedManyWithoutOrganizationInput
     workspaces?: WorkspaceCreateNestedManyWithoutOrganizationInput
@@ -19206,6 +19375,7 @@ export namespace Prisma {
     plan?: $Enums.Plan
     tokenLimit?: number
     stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
     createdAt?: Date | string
     memberships?: MembershipUncheckedCreateNestedManyWithoutOrganizationInput
     workspaces?: WorkspaceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19287,6 +19457,7 @@ export namespace Prisma {
     plan?: EnumPlanFieldUpdateOperationsInput | $Enums.Plan
     tokenLimit?: IntFieldUpdateOperationsInput | number
     stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     memberships?: MembershipUpdateManyWithoutOrganizationNestedInput
     workspaces?: WorkspaceUpdateManyWithoutOrganizationNestedInput
@@ -19299,6 +19470,7 @@ export namespace Prisma {
     plan?: EnumPlanFieldUpdateOperationsInput | $Enums.Plan
     tokenLimit?: IntFieldUpdateOperationsInput | number
     stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     memberships?: MembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     workspaces?: WorkspaceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19636,6 +19808,7 @@ export namespace Prisma {
     plan?: $Enums.Plan
     tokenLimit?: number
     stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
     createdAt?: Date | string
     memberships?: MembershipCreateNestedManyWithoutOrganizationInput
     workspaces?: WorkspaceCreateNestedManyWithoutOrganizationInput
@@ -19648,6 +19821,7 @@ export namespace Prisma {
     plan?: $Enums.Plan
     tokenLimit?: number
     stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
     createdAt?: Date | string
     memberships?: MembershipUncheckedCreateNestedManyWithoutOrganizationInput
     workspaces?: WorkspaceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19709,6 +19883,7 @@ export namespace Prisma {
     plan?: EnumPlanFieldUpdateOperationsInput | $Enums.Plan
     tokenLimit?: IntFieldUpdateOperationsInput | number
     stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     memberships?: MembershipUpdateManyWithoutOrganizationNestedInput
     workspaces?: WorkspaceUpdateManyWithoutOrganizationNestedInput
@@ -19721,6 +19896,7 @@ export namespace Prisma {
     plan?: EnumPlanFieldUpdateOperationsInput | $Enums.Plan
     tokenLimit?: IntFieldUpdateOperationsInput | number
     stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     memberships?: MembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     workspaces?: WorkspaceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19800,6 +19976,8 @@ export namespace Prisma {
     promptTokens: number
     completionTokens: number
     latencyMs: number
+    totalTokens: number
+    cost: number
     promptVersion?: string | null
     error?: string | null
     createdAt?: Date | string
@@ -19900,6 +20078,8 @@ export namespace Prisma {
     promptTokens?: IntFieldUpdateOperationsInput | number
     completionTokens?: IntFieldUpdateOperationsInput | number
     latencyMs?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    cost?: FloatFieldUpdateOperationsInput | number
     promptVersion?: NullableStringFieldUpdateOperationsInput | string | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19913,6 +20093,8 @@ export namespace Prisma {
     promptTokens?: IntFieldUpdateOperationsInput | number
     completionTokens?: IntFieldUpdateOperationsInput | number
     latencyMs?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    cost?: FloatFieldUpdateOperationsInput | number
     promptVersion?: NullableStringFieldUpdateOperationsInput | string | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19925,6 +20107,8 @@ export namespace Prisma {
     promptTokens?: IntFieldUpdateOperationsInput | number
     completionTokens?: IntFieldUpdateOperationsInput | number
     latencyMs?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    cost?: FloatFieldUpdateOperationsInput | number
     promptVersion?: NullableStringFieldUpdateOperationsInput | string | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19989,6 +20173,8 @@ export namespace Prisma {
     promptTokens: number
     completionTokens: number
     latencyMs: number
+    totalTokens: number
+    cost: number
     promptVersion?: string | null
     error?: string | null
     createdAt?: Date | string
@@ -20084,6 +20270,8 @@ export namespace Prisma {
     promptTokens?: IntFieldUpdateOperationsInput | number
     completionTokens?: IntFieldUpdateOperationsInput | number
     latencyMs?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    cost?: FloatFieldUpdateOperationsInput | number
     promptVersion?: NullableStringFieldUpdateOperationsInput | string | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20097,6 +20285,8 @@ export namespace Prisma {
     promptTokens?: IntFieldUpdateOperationsInput | number
     completionTokens?: IntFieldUpdateOperationsInput | number
     latencyMs?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    cost?: FloatFieldUpdateOperationsInput | number
     promptVersion?: NullableStringFieldUpdateOperationsInput | string | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20109,6 +20299,8 @@ export namespace Prisma {
     promptTokens?: IntFieldUpdateOperationsInput | number
     completionTokens?: IntFieldUpdateOperationsInput | number
     latencyMs?: IntFieldUpdateOperationsInput | number
+    totalTokens?: IntFieldUpdateOperationsInput | number
+    cost?: FloatFieldUpdateOperationsInput | number
     promptVersion?: NullableStringFieldUpdateOperationsInput | string | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

@@ -158,6 +158,7 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   plan: 'plan',
   tokenLimit: 'tokenLimit',
   stripeCustomerId: 'stripeCustomerId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
   createdAt: 'createdAt'
 };
 
@@ -224,6 +225,8 @@ exports.Prisma.AiUsageScalarFieldEnum = {
   promptTokens: 'promptTokens',
   completionTokens: 'completionTokens',
   latencyMs: 'latencyMs',
+  totalTokens: 'totalTokens',
+  cost: 'cost',
   promptVersion: 'promptVersion',
   error: 'error',
   createdAt: 'createdAt'
