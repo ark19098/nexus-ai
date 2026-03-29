@@ -5,21 +5,20 @@ import Sidebar from "../_components/Sidebar"
 export default async function SidebarSlot({
   params,
 }: {
-  params: Promise<{ orgId: string; wsId: string }>
+  params: Promise<{ orgId: string }>
 }) {
-    const { orgId, wsId } = await params
-    const session = await auth()
+    const { orgId } = await params;
+    const session = await auth();
 
     // Sidebar fetches its own data independently
-    const workspaces = await getWorkspacesByOrgId(orgId)
+    const workspaces = await getWorkspacesByOrgId(orgId);
 
     return (
         <Sidebar
             orgId={orgId}
-            wsId={wsId}
             workspaces={workspaces}
             userEmail={session?.user?.email ?? ""}
             userName={session?.user?.name ?? ""}
         />
-    )
+    );
 }

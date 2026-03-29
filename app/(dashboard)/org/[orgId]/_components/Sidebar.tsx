@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import {
   FileText,
@@ -7,6 +9,7 @@ import {
   Users,
   ChevronDown,
 } from "lucide-react"
+import { useParams } from "next/navigation"
 
 interface Workspace {
   id: string
@@ -15,7 +18,6 @@ interface Workspace {
 
 interface SidebarProps {
   orgId: string
-  wsId: string
   workspaces: Workspace[]
   userEmail: string
   userName: string
@@ -23,22 +25,27 @@ interface SidebarProps {
 
 export default function Sidebar({
   orgId,
-  wsId,
   workspaces,
   userEmail,
   userName,
 }: SidebarProps) {
-  const currentWorkspace = workspaces.find((w) => w.id === wsId)
+  const params = useParams();
+  const urlWsId = params.wsId as string | undefined;
+
+  // FALLBACK: If they are on the Analytics page (no wsId in URL), default to the first workspace so the links still work!
+  const activeWsId = urlWsId && workspaces.some(ws => ws.id === urlWsId) ? urlWsId : workspaces[0]?.id;
+
+  const currentWorkspace = workspaces.find(ws => ws.id === activeWsId);
 
   const navItems = [
     {
       label: "Documents",
-      href: `/org/${orgId}/workspace/${wsId}/documents`,
+      href: `/org/${orgId}/workspace/${activeWsId}/documents`,
       icon: FileText,
     },
     {
       label: "Chat",
-      href: `/org/${orgId}/workspace/${wsId}/chat`,
+      href: `/org/${orgId}/workspace/${activeWsId}/chat`,
       icon: MessageSquare,
     },
   ]

@@ -5,9 +5,11 @@ import { notFound, redirect } from "next/navigation";
 export default async function OrgLayout({
   children,
   params,
+  sidebar,
 }: {
   children: React.ReactNode;
   params: Promise<{ orgId: string }>;
+  sidebar: React.ReactNode;
 }) {
     const { orgId } = await params;
     const session = await auth();
@@ -18,30 +20,17 @@ export default async function OrgLayout({
     }
 
     const organization = await getOrganizationById(orgId);
-
-    // If the org doesn't exist in the database, trigger Next.js 404
-    if (!organization) {
-        return notFound();
-    }
+    if (!organization) return notFound();
 
     return (
-        <div className="flex h-screen overflow-hidden">
-            {/* Placeholder for your future Sidebar */}
-            <aside className="w-64 border-r border-slate-200 bg-white flex flex-col hidden md:flex">
-                <div className="p-4 border-b border-slate-200">
-                <h2 className="font-bold text-slate-800 truncate">{organization.name}</h2>
-                <p className="text-xs text-slate-500 capitalize">{session.user.role}</p>
-                </div>
-                <nav className="p-4 flex-1">
-                {/* Nav links go here later */}
-                <div className="text-sm text-slate-400">Sidebar Placeholder</div>
-                </nav>
+        <div className="min-h-screen bg-zinc-950 flex">
+            {/* Sidebar slot — @sidebar/default.tsx renders here */}
+            <aside className="w-60 border-r border-zinc-800 flex-shrink-0 flex flex-col">
+                {sidebar}
             </aside>
-
-            {/* Main Content Area */}
-            <main className="flex-1 overflow-y-auto bg-slate-50 p-6">
+            <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
                 {children}
-            </main>
+            </div>
         </div>
     );
 }
