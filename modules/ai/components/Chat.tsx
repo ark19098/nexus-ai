@@ -18,25 +18,40 @@ function cn(...inputs: ClassValue[]) {
 
 interface ChatProps {
   conversationId?: string
-  initialMessages?: Message[]
   orgId: string
   wsId: string
   userName?: string
+  initialMessages?: Message[]
+  onCreateConversation?:  (firstMessage: string) => Promise<string | null>
 }
 
+/**
+ * onCreateConversation
+ * Callback — called when first message sent with no conversationId
+ * Returns the newly created conversationId (or null on failure)
+ */
+
 export default function Chat({
-  conversationId,
-  initialMessages = [],
+  conversationId: initialConversationId,
   orgId,
   wsId,
+  initialMessages = [],
   userName = "You",
+  onCreateConversation,
 }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [activeConversationId, setActiveId] = useState(initialConversationId)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // Sync conversationId when parent changes route
+  useEffect(() => {
+    setActiveId(initialConversationId)
+    setMessages(initialMessages)
+  }, [initialConversationId])
 
   // Auto-scroll
   const scrollToBottom = useCallback(() => {
@@ -67,45 +82,41 @@ export default function Chat({
     setIsLoading(true)
 
     // Optimistic UI — add user message + assistant placeholder immediately
-    const userMessage: Message = {
-      id: crypto.randomUUID(),
-      role: "user",
-      content: userQuestion,
-    }
-
-    const assistantMessageId = crypto.randomUUID()
-    const assistantPlaceholder: Message = {
-      id: assistantMessageId,
-      role: "assistant",
-      content: "",
-      isStreaming: true,
-    }
-
-    setMessages((prev) => [...prev, userMessage, assistantPlaceholder])
+    const userMsgId      = crypto.randomUUID();
+    const assistantMsgId = crypto.randomUUID();
+ 
+    setMessages((prev) => [
+      ...prev,
+      { id: userMsgId, role: "user", content: userQuestion },
+      { id: assistantMsgId, role: "assistant", content: "", isStreaming: true },
+    ]);
 
     // Build history from current messages (exclude placeholder)
-    const history = messages.map((m) => ({
-      role: m.role,
-      content: m.content,
-    }))
+    const history = messages.map((m) => ({ role: m.role, content: m.content }));
 
-    abortControllerRef.current = new AbortController()
+    // Create conversation if this is the first message
+    let conversationId = activeConversationId;
+    if (!conversationId && onCreateConversation) {
+      const newId = await onCreateConversation(userQuestion);
+      if (newId) {
+        conversationId = newId;
+        setActiveId(newId);
+      }
+    }
+
+    abortControllerRef.current = new AbortController();
 
     try {
       const response = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question: userQuestion,
-          conversationId,
-          history,
-        }),
+        body: JSON.stringify({ question: userQuestion, conversationId, history }),
         signal: abortControllerRef.current.signal,
       })
 
       if (!response.ok) {
-        const errText = await response.text().catch(() => "Unknown error")
-        throw new Error(errText)
+        const errText = await response.text().catch(() => "Server error");
+        throw new Error(errText);
       }
 
       // Parse RAG headers BEFORE reading stream
@@ -131,7 +142,7 @@ export default function Chat({
       // Attach metadata to placeholder — sources appear while streaming
       setMessages((prev) =>
         prev.map((msg) =>
-          msg.id === assistantMessageId ? { ...msg, metadata } : msg
+          msg.id === assistantMsgId ? { ...msg, metadata } : msg
         )
       )
 
@@ -143,41 +154,28 @@ export default function Chat({
       let streamedText = ""
 
       while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
+        const { done, value } = await reader.read();
+        if (done) break;
 
-        streamedText += decoder.decode(value, { stream: true })
+        streamedText += decoder.decode(value, { stream: true });
 
         setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === assistantMessageId
-              ? { ...msg, content: streamedText }
-              : msg
-          )
-        )
+          prev.map((msg) => msg.id === assistantMsgId ? { ...msg, content: streamedText } : msg)
+        );
       }
 
       // Finalize — remove streaming flag
       setMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === assistantMessageId
-            ? { ...msg, isStreaming: false }
-            : msg
-        )
-      )
+        prev.map((msg) => msg.id === assistantMsgId ? { ...msg, isStreaming: false } : msg)
+      );
     } catch (error: unknown) {
       if (error instanceof Error && error.name === "AbortError") return
 
       console.error("[CHAT]", error)
       setMessages((prev) =>
         prev.map((msg) =>
-          msg.id === assistantMessageId
-            ? {
-                ...msg,
-                content: "Something went wrong. Please try again.",
-                isError: true,
-                isStreaming: false,
-              }
+          msg.id === assistantMsgId
+            ? { ...msg, content: "Something went wrong. Please try again.", isError: true, isStreaming: false }
             : msg
         )
       )
@@ -259,7 +257,7 @@ export default function Chat({
           </div>
 
           <p className="text-zinc-700 text-xs text-center mt-2">
-            Enter to send · Shift+Enter for new line · Answers sourced from your documents only
+            Enter to send · Shift+Enter for new line
           </p>
         </div>
       </div>

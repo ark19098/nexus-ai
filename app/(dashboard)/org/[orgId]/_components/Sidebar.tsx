@@ -8,6 +8,7 @@ import {
   Settings,
   Users,
   ChevronDown,
+  CreditCard,
 } from "lucide-react"
 import { useParams } from "next/navigation"
 
@@ -21,6 +22,8 @@ interface SidebarProps {
   workspaces: Workspace[]
   userEmail: string
   userName: string
+  isOwner: boolean
+  plan: string
 }
 
 export default function Sidebar({
@@ -28,6 +31,8 @@ export default function Sidebar({
   workspaces,
   userEmail,
   userName,
+  isOwner,
+  plan,
 }: SidebarProps) {
   const params = useParams();
   const urlWsId = params.wsId as string | undefined;
@@ -56,6 +61,11 @@ export default function Sidebar({
       href: `/org/${orgId}/analytics`,
       icon: BarChart2,
     },
+    ...(isOwner ? [{
+      label: "Billing",
+      href: `/org/${orgId}/billing`,
+      icon: CreditCard,
+    }] : []),
     {
       label: "Members",
       href: `/org/${orgId}/settings/members`,
@@ -131,6 +141,22 @@ export default function Sidebar({
         </nav>
       </div>
 
+      {plan === "FREE" && (
+        <div className="px-3 py-4 mt-auto">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-3">
+            <p className="text-white text-base font-semibold mb-1">Unlock Pro</p>
+            <p className="text-zinc-500 text-sm mb-3 leading-tight">
+              Get 1M tokens and advanced AI models.
+            </p>
+            <Link 
+              href={`/org/${orgId}/billing`}
+              className="block w-full text-center bg-cyan-600 hover:bg-cyan-500 text-white text-sm tracking-wide font-medium py-1.5 rounded transition-colors"
+            >
+              Upgrade
+            </Link>
+          </div>
+        </div>
+      )}
       {/* User footer */}
       <div className="border-t border-zinc-800 px-3 py-3 flex-shrink-0">
         <div className="flex items-center gap-2 px-2 py-2">

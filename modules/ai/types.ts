@@ -21,3 +21,10 @@ export type Message = {
   isStreaming?: boolean
   isError?: boolean
 }
+
+export type ConversationSummary = {
+  id: string
+  title: string | null
+  createdAt: Date
+  messages: { content: string }[]
+}
