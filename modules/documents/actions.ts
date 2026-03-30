@@ -7,6 +7,7 @@ import { createDocument } from "./services"
 import { CACHE_TAGS } from "@/core/redis/cache-tags"
 import { inngest } from "@/lib/inngest"
 import { VectorizationInput } from "../rag/types"
+import { prisma } from "@/core/db/client"
 
 const CreateDocumentSchema = z.object({
     fileName: z.string().min(1, "File name is required"),
@@ -66,4 +67,46 @@ export async function createDocumentAction(data: {
     return { error: "Failed to save document" }
   }
 
+}
+
+export async function deleteDocumentAction(
+  documentId: string
+): Promise<{ success?: boolean; error?: string }> {
+  const session = await auth()
+  if (!session?.user?.id || !session.user.orgId) return { error: "Unauthorized" }
+ 
+  const { orgId } = session.user
+ 
+  // Verify document belongs to this org before touching anything
+  const document = await prisma.document.findFirst({
+    where: {
+      id:             documentId,
+      organizationId: orgId,
+      deletedAt:      null,
+    },
+  })
+ 
+  if (!document) return { error: "Document not found" }
+ 
+  try {
+    // 1. Soft-delete in PostgreSQL — preserves audit trail
+    await prisma.document.update({
+      where: { id: documentId },
+      data:  { deletedAt: new Date() },
+    })
+ 
+    // 2. Hard-delete vectors from Pinecone — free up vector quota
+    // Fire-and-forget — Pinecone cleanup failure should not block the UI
+    // void deleteDocumentChunks(documentId, orgId).catch((err) => {
+    //   console.error(`[DELETE_DOC] Pinecone cleanup failed for ${documentId}:`, err)
+    // })
+ 
+    // 3. Invalidate document list cache
+    revalidateTag(CACHE_TAGS.documents(orgId))
+ 
+    return { success: true }
+  } catch (err) {
+    console.error("[DELETE_DOCUMENT]", err)
+    return { error: "Failed to delete document" }
+  }
 }

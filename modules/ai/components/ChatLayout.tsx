@@ -4,7 +4,7 @@
 // Composes ConversationSidebar + Chat
 // Handles: new conversation creation, URL updates, conversation switching
 
-import { useState, useCallback }    from "react"
+import { useState, useCallback, useEffect }    from "react"
 import { useRouter }                from "next/navigation"
 import ConversationSidebar          from "./ConversationSidebar"
 import Chat                         from "./Chat"
@@ -34,37 +34,32 @@ export default function ChatLayout({
   const [conversations, setConversations]     = useState(initialConversations)
   const [activeId, setActiveId]               = useState(initialActiveId)
   const [messages, setMessages]               = useState(initialMessages)
-  const [pendingConversationId, setPendingId] = useState<string | null>(null)
 
   // Called by Chat when user sends first message and no conversationId exists yet
-  // Creates the conversation, updates URL silently, returns the new ID
   const handleCreateConversation = useCallback(
     async (firstMessage: string): Promise<string | null> => {
-      const result = await createConversationAction(wsId, orgId, firstMessage);
-      if (result.error || !result.conversationId) return null;
+        const result = await createConversationAction(wsId, orgId, firstMessage);
+        if (result.error || !result.conversationId) return null;
 
-      const newId = result.conversationId;
+        const newId = result.conversationId;
 
-      // Add to sidebar immediately (optimistic)
-      setConversations((prev) => [
-        {
-          id:        newId,
-          title:     firstMessage.slice(0, 60),
-          createdAt: new Date(),
-          messages:  [{ content: firstMessage }],
-        },
-        ...prev,
-      ]);
+        // Add to sidebar immediately (optimistic)
+        setConversations((prev) => [
+            {
+            id:        newId,
+            title:     firstMessage.slice(0, 60),
+            createdAt: new Date(),
+            messages:  [{ content: firstMessage }],
+            },
+            ...prev,
+        ]);
 
-      setActiveId(newId);
+        setActiveId(newId);
 
-      // Update URL silently — no page reload, no scroll reset
-      router.replace(
-        `/org/${orgId}/workspace/${wsId}/chat/${newId}`,
-        { scroll: false }
-      );
+        // Don't router.replace() here — do it AFTER stream completes
+        // Pass newId back to Chat so it can use it for the API call
 
-      return newId;
+        return newId;
     },
     [orgId, wsId, router]
   )
@@ -79,14 +74,12 @@ export default function ChatLayout({
     [activeId, orgId, wsId, router]
   )
 
-  // Called when user clicks "New Chat"
   const handleNewChat = useCallback(() => {
     setActiveId(null)
     setMessages([])
     router.push(`/org/${orgId}/workspace/${wsId}/chat`)
   }, [orgId, wsId, router])
 
-  // Called when user deletes a conversation from sidebar
   const handleDeleteConversation = useCallback(
     (conversationId: string) => {
       setConversations((prev) => prev.filter((c) => c.id !== conversationId))

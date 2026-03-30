@@ -1,8 +1,5 @@
 "use client"
 
-// modules/ai/components/Chat.tsx
-// Final production chat UI — dark theme, streaming, RAG diagnostics, source citations
-
 import React, { useState, useRef, useEffect, useCallback } from "react"
 import { Send, Square } from "lucide-react"
 
@@ -11,6 +8,7 @@ import { twMerge } from "tailwind-merge"
 import MessageBubble from "./MessageBubble"
 import EmptyState from "./EmptyState"
 import { Message, RAGMetadata } from "../types"
+import { useRouter } from "next/navigation"
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -47,10 +45,23 @@ export default function Chat({
   const abortControllerRef = useRef<AbortController | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  const isFirstMount = useRef(true);
+
+  const router = useRouter();
+
   // Sync conversationId when parent changes route
   useEffect(() => {
-    setActiveId(initialConversationId)
-    setMessages(initialMessages)
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+
+    // Route changed to a DIFFERENT conversation — only then reset
+    // But NOT when we just created this conversation ourselves
+    if (initialConversationId !== activeConversationId) {
+      setActiveId(initialConversationId);
+      setMessages(initialMessages);
+    }
   }, [initialConversationId])
 
   // Auto-scroll
@@ -168,6 +179,14 @@ export default function Chat({
       setMessages((prev) =>
         prev.map((msg) => msg.id === assistantMsgId ? { ...msg, isStreaming: false } : msg)
       );
+
+      if (!initialConversationId && conversationId) {
+        // router.replace(
+        //   `/org/${orgId}/workspace/${wsId}/chat/${conversationId}`,
+        //   { scroll: false }
+        // );
+        window.history.replaceState(null, '', `/org/${orgId}/workspace/${wsId}/chat/${conversationId}`);
+      }
     } catch (error: unknown) {
       if (error instanceof Error && error.name === "AbortError") return
 

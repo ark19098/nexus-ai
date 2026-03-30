@@ -2,6 +2,7 @@ import { auth } from "@/core/auth/config"
 import { redirect } from "next/navigation"
 import { prisma } from "@/core/db/client";
 import ChatLayout from "@/modules/ai/components/ChatLayout";
+import { getConversationsByWorkspace } from "@/core/db/queries/conversation";
 
 export default async function ChatPage({
   params,
@@ -14,21 +15,7 @@ export default async function ChatPage({
   if (!session?.user) redirect("/login");
 
   // Load all conversations for sidebar
-  const conversations = await prisma.conversation.findMany({
-    where: { organizationId: orgId, workspaceId: wsId },
-    orderBy: { createdAt: "desc" },
-    take: 50,
-    select: {
-      id: true,
-      title: true,
-      createdAt: true,
-      messages: {
-        orderBy: { createdAt: "asc" },
-        take: 1,
-        select: { content: true },
-      },
-    },
-  });
+  const conversations = await getConversationsByWorkspace(wsId, orgId);
 
   return (
     <ChatLayout
