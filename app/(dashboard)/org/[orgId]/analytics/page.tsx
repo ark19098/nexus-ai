@@ -30,7 +30,7 @@ export default async function AnalyticsPage({
   if (!["OWNER", "ADMIN"].includes(session.user.role ?? "")) {
     return (
       <div className="p-8 text-zinc-500 text-sm">
-        You don't have permission to view analytics.
+        You don&apos;t have permission to view analytics.
       </div>
     )
   }
