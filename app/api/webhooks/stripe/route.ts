@@ -65,7 +65,7 @@ export async function POST(req: Request) {
 
                 // Retrieve full subscription to access metadata
                 const subscription = await stripe.subscriptions.retrieve(checkoutSession.subscription as string);
-
+                console.log(subscription, 'Retrieved subscription');
                 await handleSubscriptionUpdate(subscription);
                 break;
             }

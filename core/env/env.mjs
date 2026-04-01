@@ -38,13 +38,18 @@ export const env = createEnv({
 
         STRIPE_SECRET_KEY: z.string().min(1),
         STRIPE_WEBHOOK_SECRET: z.string().min(1),
+
+        UPSTASH_REDIS_REST_URL: z.string().url(),
+        UPSTASH_REDIS_REST_TOKEN: z.string(),
     },
     client: {
         NEXT_PUBLIC_APP_URL: z.string().url(),
+        NEXT_PUBLIC_STRIPE_PRICE_ID_PRO: z.string().min(1),
     },
     runtimeEnv: {
         DATABASE_URL: process.env.DATABASE_URL,
         NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+        NEXT_PUBLIC_STRIPE_PRICE_ID_PRO: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO,
 
         AUTH_SECRET: process.env.AUTH_SECRET,
 
@@ -80,5 +85,8 @@ export const env = createEnv({
 
         STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
         STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+
+        UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+        UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
     },
   });

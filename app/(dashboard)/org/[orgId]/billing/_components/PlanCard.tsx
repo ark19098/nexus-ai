@@ -28,6 +28,7 @@ export default function PlanCard({ plan, currentPlan, orgId }: Props) {
 
     startTransition(async () => {
       const result = await createCheckoutSessionAction(plan)
+      console.log(result, 'Upgraded');
 
       if (result?.error) {
         setError(result.error)

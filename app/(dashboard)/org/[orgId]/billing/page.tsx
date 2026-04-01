@@ -8,7 +8,6 @@ import {
   checkTokenLimit,
 }                                  from "@/modules/observability/queries"
 import { PLANS, type PlanType, isUpgrade } from "@/lib/plans"
-import { formatCost }              from "@/modules/observability/costs"
 import CurrentPlanBanner           from "./_components/CurrentPlanBanner"
 import PlanCard                    from "./_components/PlanCard"
 import BillingPortalButton         from "./_components/BillingPortalButton"
@@ -70,7 +69,6 @@ export default async function BillingPage({
         currentPlan={currentPlan}
         tokenStatus={tokenStatus}
         monthlySummary={monthlySummary}
-        formatCost={formatCost}
         hasStripeAccount={!!org?.stripeCustomerId}
       />
 

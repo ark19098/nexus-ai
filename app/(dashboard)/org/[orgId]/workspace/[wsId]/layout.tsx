@@ -1,5 +1,6 @@
 import { auth } from "@/core/auth/config";
 import { getWorkspaceById } from "@/core/db/queries/workspaces";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export default async function WorkspaceLayout({
@@ -27,9 +28,12 @@ export default async function WorkspaceLayout({
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <button className="text-zinc-500 hover:text-white text-xs border border-zinc-800 hover:border-zinc-600 px-3 py-1.5 rounded-md transition-colors">
-            + New document
-          </button>
+          <Link
+            href={`/org/${orgId}/workspace/${wsId}/documents`} passHref
+            className="text-zinc-500 hover:text-white text-xs border border-zinc-800 hover:border-zinc-600 px-3 py-1.5 rounded-md transition-colors"
+          >
+              + New document
+          </Link>
         </div>
       </header>
       <div className="flex-1 overflow-auto bg-zinc-950">

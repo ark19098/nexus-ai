@@ -1,3 +1,5 @@
+import { env } from "@/core/env/env.mjs";
+
 export const PLANS = {
     FREE: {
         name:        "Free",
@@ -15,8 +17,8 @@ export const PLANS = {
     PRO: {
         name:        "Pro",
         description: "For growing teams with heavy usage",
-        priceLabel:  "$49 / month",
-        priceId:     process.env.STRIPE_PRICE_PRO ?? null,
+        priceLabel:  "$9 / month",
+        priceId:     env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO ?? null,
         tokenLimit:  1_000_000,
         features: [
             "1,000,000 tokens / month",

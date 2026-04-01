@@ -3,6 +3,7 @@
 // app/(dashboard)/org/[orgId]/billing/_components/CurrentPlanBanner.tsx
 
 import { PLANS, type PlanType } from "@/lib/plans"
+import { formatCost } from "@/modules/observability/costs"
 import { Zap, DollarSign, TrendingUp } from "lucide-react"
 
 interface TokenStatus {
@@ -24,7 +25,6 @@ interface Props {
   currentPlan:     PlanType
   tokenStatus:     TokenStatus
   monthlySummary:  MonthlySummary
-  formatCost:      (n: number) => string
   hasStripeAccount: boolean
 }
 
@@ -32,7 +32,6 @@ export default function CurrentPlanBanner({
   currentPlan,
   tokenStatus,
   monthlySummary,
-  formatCost,
   hasStripeAccount,
 }: Props) {
   const plan = PLANS[currentPlan]
