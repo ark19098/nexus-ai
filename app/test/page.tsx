@@ -8,8 +8,8 @@ export default async function TestDatabasePage() {
   try {
     userCount = await prisma.user.count();
     dbStatus = "✅ Database Connected Successfully!";
-  } catch (error: any) {
-    dbStatus = `❌ Database Error: ${error.message}`;
+  } catch (error: unknown) {
+    dbStatus = `❌ Database Error: ${error instanceof Error ? error.message : "An unknown error occurred"}`;
   }
 
   return (

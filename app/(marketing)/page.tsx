@@ -53,7 +53,7 @@ export default async function LandingPage() {
           </h1>
 
           <p className="text-zinc-400 text-lg leading-relaxed mb-10">
-            Upload your team's documents and let AI answer questions
+            Upload your team&apos;s documents and let AI answer questions
             with source citations. Multi-tenant, secure, and built
             for enterprise teams.
           </p>

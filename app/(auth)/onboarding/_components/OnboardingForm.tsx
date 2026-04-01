@@ -39,7 +39,7 @@ export default function OnboardingForm() {
           className="w-full bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-600 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition-colors"
         />
         <p className="text-zinc-600 text-xs mt-1.5">
-          Optional — defaults to "My Workspace"
+          Optional — defaults to &quot;My Workspace&quot;
         </p>
       </div>
 
