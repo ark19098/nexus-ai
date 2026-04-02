@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useTransition }  from "react"
+import { useState, useEffect, useTransition }  from "react"
 import { FileText, Clock, Trash2, Loader2, AlertCircle, CheckCircle, RefreshCw } from "lucide-react"
 import { deleteDocumentAction }     from "@/modules/documents/actions"
 
@@ -19,6 +19,12 @@ interface Props {
 
 export default function DocumentList({ documents, orgId }: Props) {
   const [localDocs, setLocalDocs] = useState(documents)
+
+  // Sync local state when the server sends a fresh documents array
+  // (e.g. after router.refresh() following an upload or delete)
+  useEffect(() => {
+    setLocalDocs(documents)
+  }, [documents])
 
   function handleDeleted(id: string) {
     setLocalDocs((prev) => prev.filter((d) => d.id !== id))

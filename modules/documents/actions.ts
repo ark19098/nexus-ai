@@ -9,6 +9,11 @@ import { inngest } from "@/lib/inngest"
 import { VectorizationInput } from "../rag/types"
 import { prisma } from "@/core/db/client"
 
+export async function revalidateDocumentsCache(orgId: string) {
+  console.log("[REVALIDATE_DOCUMENTS_CACHE] Revalidating documents cache for orgId:", orgId)
+  revalidateTag(CACHE_TAGS.documents(orgId))
+}
+
 const CreateDocumentSchema = z.object({
     fileName: z.string().min(1, "File name is required"),
     fileKey: z.string().min(1, "File key is required"),
@@ -102,7 +107,7 @@ export async function deleteDocumentAction(
     // })
  
     // 3. Invalidate document list cache
-    revalidateTag(CACHE_TAGS.documents(orgId))
+    await revalidateDocumentsCache(orgId)
  
     return { success: true }
   } catch (err) {

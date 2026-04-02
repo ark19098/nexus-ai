@@ -1,6 +1,5 @@
 import { getCachedDocumentsByWorkspaceId } from "@/modules/documents/queries"
 import { UploadDropzone } from "@/modules/documents/components/UploadDropzone"
-import { FileText, Clock } from "lucide-react"
 import DocumentList from "@/modules/documents/components/DocumentList";
 
 export default async function DocumentsPage({

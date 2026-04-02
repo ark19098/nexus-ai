@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import { createDocumentAction } from "../actions"
 import { Upload, FileText, AlertCircle, CheckCircle } from "lucide-react"
 
@@ -19,6 +20,7 @@ export function UploadDropzone({ workspaceId }: UploadDropzoneProps) {
     status: "idle",
   })
   const [isDragging, setIsDragging] = useState(false)
+  const router = useRouter()
 
   const handleUpload = useCallback(
     async (file: File) => {
@@ -97,7 +99,9 @@ export function UploadDropzone({ workspaceId }: UploadDropzoneProps) {
         }
 
         // Success — revalidateTag in action handles list refresh
-        setUploadState({ status: "success", fileName: file.name })
+        setUploadState({ status: "success", fileName: file.name });
+
+        router.refresh();
 
         // Reset to idle after 3 seconds
         setTimeout(() => setUploadState({ status: "idle" }), 3000)

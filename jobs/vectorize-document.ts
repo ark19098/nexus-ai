@@ -2,6 +2,7 @@ import { prisma } from "@/core/db/client";
 import { env } from "@/core/env/env.mjs";
 import { downloadFromR2 } from "@/core/storage/s3";
 import { inngest } from "@/lib/inngest";
+import { revalidateDocumentsCache } from "@/modules/documents/actions";
 import { embedTexts } from "@/modules/rag/client/embeddings";
 import { deleteDocumentChunks, upsertChunks } from "@/modules/rag/client/pinecone";
 import { extractPdfText } from "@/modules/rag/pdf";
@@ -44,6 +45,8 @@ export const vectorizeDocument = inngest.createFunction({
                 where: { id: doc.id },
                 data: { status: "PROCESSING" }
             });
+
+            await revalidateDocumentsCache(orgId);
 
             return doc;
         });
@@ -118,6 +121,7 @@ export const vectorizeDocument = inngest.createFunction({
                 },
             })
             console.log(`[JOB] Document ${documentId} marked as READY`)
+            await revalidateDocumentsCache(orgId);
         });
 
         return {
@@ -149,5 +153,7 @@ export const vectorizeDocumentFailure = inngest.createFunction({
             where: { id: originalData.documentId },
             data:  { status: "FAILED" },
         });
+
+        await revalidateDocumentsCache(originalData.orgId);
     }
 );

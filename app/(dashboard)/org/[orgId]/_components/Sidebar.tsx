@@ -9,8 +9,10 @@ import {
   Users,
   ChevronDown,
   CreditCard,
+  LogOut,
 } from "lucide-react"
 import { useParams } from "next/navigation"
+import { signOutAction } from "@/core/auth/actions"
 
 interface Workspace {
   id: string
@@ -158,8 +160,14 @@ export default function Sidebar({
         </div>
       )}
       {/* User footer */}
-      <div className="border-t border-zinc-800 px-3 py-3 flex-shrink-0">
-        <div className="flex items-center gap-2 px-2 py-2">
+      <div className="px-3 py-3 flex-shrink-0">
+        <form className="w-full" action={signOutAction}>
+          <button type="submit" className="w-full flex items-center justify-center gap-2 px-2 py-2 border-zinc-800 border rounded-md hover:bg-red-500/60 hover:text-white hover:cursor-pointer transition-colors group">
+            <LogOut className="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors" />
+            <span className="text-zinc-500 text-xs group-hover:text-white transition-colors">Sign Out</span>
+          </button>
+        </form>
+        <div className="border-t border-zinc-800 flex items-center gap-2 px-2 py-2 mt-2">
           {/* Avatar */}
           <div className="w-6 h-6 rounded-full bg-zinc-700 flex items-center justify-center flex-shrink-0">
             <span className="text-zinc-300 text-xs font-medium">
