@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useRef, useEffect, useCallback } from "react"
-import { Send, Square } from "lucide-react"
+import { Send, Square, MessageSquare } from "lucide-react"
 
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
@@ -20,7 +20,8 @@ interface ChatProps {
   wsId: string
   userName?: string
   initialMessages?: Message[]
-  onCreateConversation?:  (firstMessage: string) => Promise<string | null>
+  onCreateConversation?: (firstMessage: string) => Promise<string | null>
+  onOpenConversations?:  () => void
 }
 
 /**
@@ -36,6 +37,7 @@ export default function Chat({
   initialMessages = [],
   userName = "You",
   onCreateConversation,
+  onOpenConversations,
 }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [input, setInput] = useState("")
@@ -219,6 +221,17 @@ export default function Chat({
   return (
     <div className="flex flex-col h-full bg-zinc-950">
 
+      {/* ── Mobile top bar — conversations toggle ── */}
+      <div className="md:hidden h-12 border-b border-zinc-800 flex items-center px-4 shrink-0">
+        <button
+          onClick={onOpenConversations}
+          className="flex items-center gap-2 text-zinc-400 hover:text-white text-xs font-medium transition-colors"
+        >
+          <MessageSquare className="w-4 h-4" />
+          Conversations
+        </button>
+      </div>
+
       {/* ── Messages ── */}
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="max-w-3xl mx-auto space-y-6">
@@ -258,7 +271,7 @@ export default function Chat({
             {isLoading ? (
               <button
                 onClick={stopGeneration}
-                className="flex-shrink-0 w-8 h-8 bg-red-950 hover:bg-red-900 border border-red-800 rounded-lg flex items-center justify-center transition-colors"
+                className="shrink-0 w-8 h-8 bg-red-950 hover:bg-red-900 border border-red-800 rounded-lg flex items-center justify-center transition-colors"
                 title="Stop generating"
               >
                 <Square className="w-3 h-3 text-red-400 fill-red-400" />
@@ -267,7 +280,7 @@ export default function Chat({
               <button
                 onClick={() => handleSubmit()}
                 disabled={!input.trim()}
-                className="flex-shrink-0 w-8 h-8 bg-cyan-500 hover:bg-cyan-400 disabled:bg-zinc-800 disabled:cursor-not-allowed rounded-lg flex items-center justify-center transition-colors"
+                className="shrink-0 w-8 h-8 bg-cyan-500 hover:bg-cyan-400 disabled:bg-zinc-800 disabled:cursor-not-allowed rounded-lg flex items-center justify-center transition-colors"
                 title="Send (Enter)"
               >
                 <Send className="w-3.5 h-3.5 text-zinc-950" />

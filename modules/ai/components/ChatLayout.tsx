@@ -4,7 +4,7 @@
 // Composes ConversationSidebar + Chat
 // Handles: new conversation creation, URL updates, conversation switching
 
-import { useState, useCallback, useEffect }    from "react"
+import { useState, useCallback }    from "react"
 import { useRouter }                from "next/navigation"
 import ConversationSidebar          from "./ConversationSidebar"
 import Chat                         from "./Chat"
@@ -24,16 +24,16 @@ interface Props {
 export default function ChatLayout({
   orgId,
   wsId,
-  userId,
   userName,
   conversations:    initialConversations,
   activeConversationId: initialActiveId,
   initialMessages,
 }: Props) {
-  const router = useRouter()
+  const router                                = useRouter()
   const [conversations, setConversations]     = useState(initialConversations)
   const [activeId, setActiveId]               = useState(initialActiveId)
   const [messages, setMessages]               = useState(initialMessages)
+  const [convSidebarOpen, setConvSidebarOpen] = useState(false)
 
   // Called by Chat when user sends first message and no conversationId exists yet
   const handleCreateConversation = useCallback(
@@ -61,14 +61,14 @@ export default function ChatLayout({
 
         return newId;
     },
-    [orgId, wsId, router]
+    [orgId, wsId]
   )
 
   // Called when user clicks a conversation in the sidebar
   const handleSelectConversation = useCallback(
     (conversationId: string) => {
       if (conversationId === activeId) return
-      // Navigate to conversation — page will SSR with full history
+      setConvSidebarOpen(false)
       router.push(`/org/${orgId}/workspace/${wsId}/chat/${conversationId}`)
     },
     [activeId, orgId, wsId, router]
@@ -77,6 +77,7 @@ export default function ChatLayout({
   const handleNewChat = useCallback(() => {
     setActiveId(null)
     setMessages([])
+    setConvSidebarOpen(false)
     router.push(`/org/${orgId}/workspace/${wsId}/chat`)
   }, [orgId, wsId, router])
 
@@ -99,6 +100,8 @@ export default function ChatLayout({
         activeId={activeId}
         orgId={orgId}
         wsId={wsId}
+        isOpen={convSidebarOpen}
+        onClose={() => setConvSidebarOpen(false)}
         onSelect={handleSelectConversation}
         onNew={handleNewChat}
         onDelete={handleDeleteConversation}
@@ -112,6 +115,7 @@ export default function ChatLayout({
           conversationId={activeId ?? undefined}
           initialMessages={messages}
           onCreateConversation={handleCreateConversation}
+          onOpenConversations={() => setConvSidebarOpen(true)}
         />
       </div>
     </div>

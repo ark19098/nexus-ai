@@ -3,7 +3,7 @@
 // modules/ai/components/ConversationSidebar.tsx
 
 import { useState, useTransition }   from "react"
-import { Plus, MessageSquare, Trash2, Loader2 } from "lucide-react"
+import { Plus, MessageSquare, Trash2, Loader2, X } from "lucide-react"
 import { deleteConversationAction }  from "@/modules/ai/actions"
 import type { ConversationSummary }  from "@/modules/ai/types"
 
@@ -12,6 +12,8 @@ interface Props {
   activeId:      string | null
   orgId:         string
   wsId:          string
+  isOpen:        boolean
+  onClose:       () => void
   onSelect:      (id: string) => void
   onNew:         () => void
   onDelete:      (id: string) => void
@@ -21,20 +23,30 @@ export default function ConversationSidebar({
   conversations,
   activeId,
   orgId,
+  isOpen,
+  onClose,
   onSelect,
   onNew,
   onDelete,
 }: Props) {
-  return (
-    <div className="w-56 border-r border-zinc-800 flex flex-col flex-shrink-0 bg-zinc-950 h-full">
-      {/* New chat button */}
-      <div className="p-3 border-b border-zinc-800 flex-shrink-0">
+  const sidebarContent = (
+    <div className="flex flex-col h-full bg-zinc-950">
+      {/* Header */}
+      <div className="p-3 border-b border-zinc-800 shrink-0 flex items-center gap-2">
         <button
           onClick={onNew}
-          className="w-full flex items-center gap-2 px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-300 text-xs font-medium transition-colors"
+          className="flex-1 flex items-center gap-2 px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-300 text-xs font-medium transition-colors"
         >
-          <Plus className="w-3.5 h-3.5" />
+          <Plus className="w-3.5 h-3.5 shrink-0" />
           New conversation
+        </button>
+        {/* Close button — mobile only */}
+        <button
+          className="md:hidden p-1.5 rounded-md text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors shrink-0"
+          onClick={onClose}
+          aria-label="Close conversations"
+        >
+          <X className="w-4 h-4" />
         </button>
       </div>
 
@@ -61,6 +73,35 @@ export default function ConversationSidebar({
       </div>
     </div>
   )
+
+  return (
+    <>
+      {/* ── Desktop: static sidebar ── */}
+      <div className="hidden md:flex w-56 border-r border-zinc-800 shrink-0 h-full">
+        {sidebarContent}
+      </div>
+
+      {/* ── Mobile: slide-in drawer ── */}
+      <div className="md:hidden">
+        {/* Backdrop */}
+        {isOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+            onClick={onClose}
+          />
+        )}
+
+        {/* Drawer */}
+        <div
+          className={`fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-300 ease-in-out ${
+            isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          {sidebarContent}
+        </div>
+      </div>
+    </>
+  )
 }
 
 // ── Conversation item with hover-reveal delete ────────────────────────────────
@@ -85,7 +126,7 @@ function ConversationItem({
   const title   = conversation.title ?? preview
 
   function handleDelete(e: React.MouseEvent) {
-    e.stopPropagation() // don't trigger onSelect
+    e.stopPropagation()
     startTransition(async () => {
       const result = await deleteConversationAction(conversation.id, orgId)
       if (!result.error) {
@@ -108,19 +149,19 @@ function ConversationItem({
         }
       `}
     >
-      <MessageSquare className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${isActive ? "text-cyan-400" : "text-zinc-600"}`} />
+      <MessageSquare className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${isActive ? "text-cyan-400" : "text-zinc-600"}`} />
 
       <div className="flex-1 min-w-0">
         <p className="text-xs font-medium truncate leading-tight">{title}</p>
         <p className="text-xs text-zinc-600 truncate mt-0.5 leading-tight">{preview}</p>
       </div>
 
-      {/* Delete button — visible on hover */}
+      {/* Delete button — visible on hover or active */}
       {(hovered || isActive) && (
         <button
           onClick={handleDelete}
           disabled={isPending}
-          className="flex-shrink-0 p-0.5 rounded hover:bg-zinc-700 text-zinc-600 hover:text-red-400 transition-colors"
+          className="shrink-0 p-0.5 rounded hover:bg-zinc-700 text-zinc-600 hover:text-red-400 transition-colors"
           title="Delete conversation"
         >
           {isPending

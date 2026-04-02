@@ -24,10 +24,18 @@ export default async function OrgLayout({
 
     return (
         <div className="min-h-screen bg-zinc-950 flex">
-            {/* Sidebar slot — @sidebar/default.tsx renders here */}
-            <aside className="w-60 border-r border-zinc-800 flex-shrink-0 flex flex-col">
+            {/* Sidebar — always visible on md+, hidden on mobile.
+                The Sidebar component itself renders the mobile drawer + hamburger. */}
+            <aside className="hidden md:flex w-60 border-r border-zinc-800 shrink-0 flex-col">
                 {sidebar}
             </aside>
+
+            {/* Mobile: sidebar renders as an overlay drawer outside the flow */}
+            <div className="md:hidden">
+                {sidebar}
+            </div>
+
+            {/* Main content */}
             <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
                 {children}
             </div>
