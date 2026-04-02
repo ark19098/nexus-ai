@@ -1,4 +1,4 @@
-import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3"
+import { DeleteObjectCommand, GetObjectCommand, S3Client } from "@aws-sdk/client-s3"
 import { env } from "@/core/env/env.mjs"
 
 export const s3Client = new S3Client({
@@ -29,4 +29,14 @@ export async function downloadFromR2(fileKey: string): Promise<Buffer> {
   }
  
   return Buffer.concat(chunks)
+}
+
+export async function deleteFromR2(fileKey: string): Promise<void> {
+  const command = new DeleteObjectCommand({
+    Bucket: env.S3_BUCKET_NAME,
+    Key: fileKey,
+  })
+
+  await s3Client.send(command)
+  console.log(`[R2] Deleted object: ${fileKey}`)
 }

@@ -113,7 +113,7 @@ export function UploadDropzone({ workspaceId }: UploadDropzoneProps) {
         })
       }
     },
-    [workspaceId]
+    [workspaceId, router]
   )
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

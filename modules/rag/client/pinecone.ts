@@ -78,24 +78,22 @@ export async function deleteDocumentChunks(
 ): Promise<void> {
   const index = getIndex()
 
-  // Pinecone doesn't support delete by metadata filter directly in all tiers
-  // Use list + deleteMany for serverless indexes
   try {
-    const listResult = await index.listPaginated({
-      prefix: `${orgId}_${documentId}_`,
-    })
+    await index.deleteMany({
+      filter: {
+        documentId: { "$eq": documentId },
+        orgId: { "$eq": orgId }
+      }
+    });
 
-    const ids = listResult.vectors?.map((v) => v.id) ?? []
-
-    if (ids.length > 0) {
-      await index.deleteMany(ids)
-      console.log(`[PINECONE] Deleted ${ids.length} chunks for document ${documentId}`)
-    }
-  } catch {
+    console.log(`[PINECONE] Successfully deleted all chunks for document ${documentId}`);
+  } catch (error) {
     // Fallback for indexes that don't support list
     console.warn(
       `[PINECONE] Could not list vectors for deletion — document ${documentId}`
     )
+    throw error;
+    // So that Inngest knows the step failed and can automatically retry it.
   }
 }
 

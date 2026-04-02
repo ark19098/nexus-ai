@@ -99,16 +99,22 @@ export async function deleteDocumentAction(
       where: { id: documentId },
       data:  { deletedAt: new Date() },
     })
- 
-    // 2. Hard-delete vectors from Pinecone — free up vector quota
-    // Fire-and-forget — Pinecone cleanup failure should not block the UI
-    // void deleteDocumentChunks(documentId, orgId).catch((err) => {
-    //   console.error(`[DELETE_DOC] Pinecone cleanup failed for ${documentId}:`, err)
-    // })
- 
+
+    console.log(`[DELETE_DOCUMENT] Deleting document "${document.name}" (${documentId}) — org: ${orgId}`);
+    // 2. Fire background job to delete Pinecone vectors + R2 file — non-blocking, auto-retried
+    await inngest.send({
+      name: "document/delete",
+      data: {
+        documentId,
+        orgId,
+        fileName: document.name,
+        fileKey:  document.fileUrl,
+      },
+    })
+
     // 3. Invalidate document list cache
     await revalidateDocumentsCache(orgId)
- 
+
     return { success: true }
   } catch (err) {
     console.error("[DELETE_DOCUMENT]", err)
