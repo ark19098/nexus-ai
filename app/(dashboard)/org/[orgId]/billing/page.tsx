@@ -11,6 +11,7 @@ import { PLANS, type PlanType, isUpgrade } from "@/lib/plans"
 import CurrentPlanBanner           from "./_components/CurrentPlanBanner"
 import PlanCard                    from "./_components/PlanCard"
 import BillingPortalButton         from "./_components/BillingPortalButton"
+import OrgPageShell                from "../_components/OrgPageShell"
 
 export const dynamic = "force-dynamic" // always fresh — billing data must never be stale
 
@@ -55,48 +56,42 @@ export default async function BillingPage({
   // The page itself stays server-rendered
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-white text-2xl font-bold tracking-tight">Billing</h1>
-        <p className="text-zinc-500 text-sm mt-1">
-          Manage your subscription and view token usage
+    <OrgPageShell title="Billing" subtitle="Manage your subscription and token usage">
+      <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-8">
+        {/* Current plan + usage */}
+        <CurrentPlanBanner
+          currentPlan={currentPlan}
+          tokenStatus={tokenStatus}
+          monthlySummary={monthlySummary}
+          hasStripeAccount={!!org?.stripeCustomerId}
+        />
+
+        {/* Manage subscription button — only if on paid plan */}
+        {org?.stripeCustomerId && currentPlan !== "FREE" && (
+          <div className="flex justify-end">
+            <BillingPortalButton />
+          </div>
+        )}
+
+        {/* Plan comparison */}
+        <div>
+          <h2 className="text-white font-semibold text-lg mb-4">Available Plans</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {(Object.keys(PLANS) as PlanType[]).map((plan) => (
+              <PlanCard
+                key={plan}
+                plan={plan}
+                currentPlan={currentPlan}
+                orgId={orgId}
+              />
+            ))}
+          </div>
+        </div>
+
+        <p className="text-zinc-700 text-xs text-center">
+          Payments are processed securely by Stripe. Cancel anytime via the customer portal.
         </p>
       </div>
-
-      {/* Current plan + usage */}
-      <CurrentPlanBanner
-        currentPlan={currentPlan}
-        tokenStatus={tokenStatus}
-        monthlySummary={monthlySummary}
-        hasStripeAccount={!!org?.stripeCustomerId}
-      />
-
-      {/* Manage subscription button — only if on paid plan */}
-      {org?.stripeCustomerId && currentPlan !== "FREE" && (
-        <div className="flex justify-end">
-          <BillingPortalButton />
-        </div>
-      )}
-
-      {/* Plan comparison */}
-      <div>
-        <h2 className="text-white font-semibold text-lg mb-4">Available Plans</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {(Object.keys(PLANS) as PlanType[]).map((plan) => (
-            <PlanCard
-              key={plan}
-              plan={plan}
-              currentPlan={currentPlan}
-              orgId={orgId}
-            />
-          ))}
-        </div>
-      </div>
-
-      <p className="text-zinc-700 text-xs text-center">
-        Payments are processed securely by Stripe. Cancel anytime via the customer portal.
-      </p>
-    </div>
+    </OrgPageShell>
   )
 }

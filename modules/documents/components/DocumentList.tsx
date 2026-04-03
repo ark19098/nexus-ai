@@ -95,14 +95,13 @@ function DocumentRow({
   }
 
   return (
-    <li className="flex items-center justify-between p-4 hover:bg-zinc-900/40 transition-colors group">
+    <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 hover:bg-zinc-900/40 transition-colors group gap-3 sm:gap-0">
+      {/* Left: icon + name + date */}
       <div className="flex items-center gap-3 min-w-0">
-        {/* Icon */}
-        <div className="w-9 h-9 rounded-md bg-zinc-800 flex items-center justify-center flex-shrink-0">
+        <div className="w-9 h-9 rounded-md bg-zinc-800 flex items-center justify-center shrink-0">
           <FileText className="w-4 h-4 text-zinc-400" />
         </div>
 
-        {/* Name + date */}
         <div className="min-w-0">
           <p className="text-white text-sm font-medium truncate">{doc.name}</p>
           <div className="flex items-center gap-1 mt-0.5">
@@ -119,11 +118,10 @@ function DocumentRow({
         </div>
       </div>
 
-      {/* Right side: status + delete */}
-      <div className="flex items-center gap-3 flex-shrink-0">
+      {/* Right: status + delete — always visible on mobile (no opacity-0 trick on small screens) */}
+      <div className="flex items-center gap-3 shrink-0 pl-12 sm:pl-0">
         <StatusBadge status={doc.status} />
 
-        {/* Delete button — two-step confirm */}
         <button
           onClick={handleDeleteClick}
           disabled={isPending}
@@ -131,7 +129,7 @@ function DocumentRow({
             p-1.5 rounded-md transition-colors
             ${confirmDelete
               ? "bg-red-950 border border-red-800 text-red-400 hover:bg-red-900"
-              : "opacity-0 group-hover:opacity-100 text-zinc-600 hover:text-red-400 hover:bg-zinc-800"
+              : "opacity-100 sm:opacity-0 sm:group-hover:opacity-100 text-zinc-600 hover:text-red-400 hover:bg-zinc-800"
             }
           `}
           title={confirmDelete ? "Click again to confirm delete" : "Delete document"}

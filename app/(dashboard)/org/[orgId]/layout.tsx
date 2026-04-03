@@ -23,7 +23,7 @@ export default async function OrgLayout({
     if (!organization) return notFound();
 
     return (
-        <div className="min-h-screen bg-zinc-950 flex">
+        <div className="h-screen bg-zinc-950 flex overflow-hidden">
             {/* Sidebar — always visible on md+, hidden on mobile.
                 The Sidebar component itself renders the mobile drawer + hamburger. */}
             <aside className="hidden md:flex w-60 border-r border-zinc-800 shrink-0 flex-col">
@@ -36,7 +36,7 @@ export default async function OrgLayout({
             </div>
 
             {/* Main content */}
-            <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+            <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
                 {children}
             </div>
         </div>

@@ -18,7 +18,9 @@ export default async function WorkspaceLayout({
 
   return (
     <>
-      <header className="h-14 border-b border-zinc-800 flex items-center justify-between px-6 flex-shrink-0">
+      <header className="h-14 border-b border-zinc-800 flex items-center justify-between px-4 md:px-6 shrink-0">
+        {/* Spacer on mobile so the hamburger (fixed, z-40) doesn't overlap the title */}
+        <div className="w-8 md:hidden" />
         <div className="flex items-center gap-3">
           <h1 className="text-white text-sm font-semibold truncate">
             {workspace.name}

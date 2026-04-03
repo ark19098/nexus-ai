@@ -38,7 +38,7 @@ export default async function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <main className="max-w-5xl mx-auto px-6 pt-24 pb-16">
+      <main className="max-w-5xl mx-auto px-4 md:px-6 pt-12 md:pt-24 pb-16">
         <div className="max-w-2xl">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800 text-cyan-400 text-xs font-medium px-3 py-1.5 rounded-full mb-8">
@@ -46,7 +46,7 @@ export default async function LandingPage() {
             Enterprise RAG — now in beta
           </div>
 
-          <h1 className="text-5xl font-bold leading-tight mb-6 text-white">
+          <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-6 text-white">
             Your documents.
             <br />
             <span className="text-cyan-400">Answered instantly.</span>
@@ -58,7 +58,7 @@ export default async function LandingPage() {
             for enterprise teams.
           </p>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
             <Link
               href={isLoggedIn ? dashboardUrl : "/login"}
               className="bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-semibold text-sm px-6 py-3 rounded-md transition-colors"
@@ -72,7 +72,7 @@ export default async function LandingPage() {
         </div>
 
         {/* Feature cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12 md:mt-24">
           {[
             {
               title: "RAG Pipeline",

@@ -15,6 +15,7 @@ import UsageChart                  from "@/modules/analytics/components/UsageCha
 import TokenLimitBar               from "@/modules/analytics/components/TokenLimitBar"
 import ModelBreakdown              from "@/modules/analytics/components/ModelBreakdown"
 import TopUsersTable               from "@/modules/analytics/components/TopUsersTable"
+import OrgPageShell                from "../_components/OrgPageShell"
 
 export default async function AnalyticsPage({
   params,
@@ -50,33 +51,29 @@ export default async function AnalyticsPage({
       checkTokenLimit(orgId),
     ])
 
+  const monthLabel = new Date(year, month - 1).toLocaleString("default", {
+    month: "long",
+    year:  "numeric",
+  })
+
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-white text-2xl font-bold tracking-tight">Analytics</h1>
-        <p className="text-zinc-500 text-sm mt-1">
-          {new Date(year, month - 1).toLocaleString("default", { month: "long", year: "numeric" })} · Usage and cost overview
-        </p>
+    <OrgPageShell title="Analytics" subtitle={`${monthLabel} · Usage and cost overview`}>
+      <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-6">
+        {/* Token limit bar */}
+        <TokenLimitBar tokenStatus={tokenStatus} />
+
+        {/* Summary cards */}
+        <UsageSummaryCards summary={summary} errorRate={errorRate} />
+
+        {/* Usage over time chart */}
+        <UsageChart data={dailyUsage} />
+
+        {/* Bottom row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ModelBreakdown models={modelBreakdown} />
+          <TopUsersTable  users={topUsers} />
+        </div>
       </div>
-
-      {/* Token limit bar */}
-      <TokenLimitBar tokenStatus={tokenStatus} />
-
-      {/* Summary cards */}
-      <UsageSummaryCards
-        summary={summary}
-        errorRate={errorRate}
-      />
-
-      {/* Usage over time chart */}
-      <UsageChart data={dailyUsage} />
-
-      {/* Bottom row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ModelBreakdown models={modelBreakdown} />
-        <TopUsersTable  users={topUsers} />
-      </div>
-    </div>
+    </OrgPageShell>
   )
 }

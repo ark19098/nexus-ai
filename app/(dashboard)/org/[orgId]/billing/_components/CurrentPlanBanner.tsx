@@ -52,7 +52,7 @@ export default function CurrentPlanBanner({
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-5">
       {/* Plan name + status */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-white font-bold text-lg">{plan.name} Plan</span>
@@ -62,7 +62,7 @@ export default function CurrentPlanBanner({
           </div>
           <p className="text-zinc-500 text-sm">{plan.description}</p>
         </div>
-        <div className="text-right">
+        <div className="sm:text-right">
           <p className="text-white font-bold">{plan.priceLabel}</p>
           {!hasStripeAccount && currentPlan !== "FREE" && (
             <p className="text-zinc-600 text-xs mt-0.5">Manual plan</p>
@@ -93,9 +93,9 @@ export default function CurrentPlanBanner({
       </div>
 
       {/* This month stats */}
-      <div className="grid grid-cols-3 gap-4 pt-2 border-t border-zinc-800">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-zinc-800">
         <div className="flex items-center gap-2">
-          <Zap className="w-4 h-4 text-cyan-600 flex-shrink-0" />
+          <Zap className="w-4 h-4 text-cyan-600 shrink-0" />
           <div>
             <p className="text-white text-sm font-semibold">
               {monthlySummary.totalTokens.toLocaleString()}
@@ -104,7 +104,7 @@ export default function CurrentPlanBanner({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <DollarSign className="w-4 h-4 text-green-600 flex-shrink-0" />
+          <DollarSign className="w-4 h-4 text-green-600 shrink-0" />
           <div>
             <p className="text-white text-sm font-semibold">
               {formatCost(monthlySummary.totalCost)}
@@ -113,7 +113,7 @@ export default function CurrentPlanBanner({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-purple-600 flex-shrink-0" />
+          <TrendingUp className="w-4 h-4 text-purple-600 shrink-0" />
           <div>
             <p className="text-white text-sm font-semibold">
               {monthlySummary.queryCount.toLocaleString()}
