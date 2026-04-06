@@ -22,7 +22,7 @@ export async function inviteMemberAction(orgId: string, formData: FormData) {
     }
 
     // Only OWNER and ADMIN can invite
-    if (["OWNER", "ADMIN"].includes(session.user.role ?? "")) {
+    if (!["OWNER", "ADMIN"].includes(session.user.role ?? "")) {
         return { error: "Only owners and admins can invite members" };
     }
 
