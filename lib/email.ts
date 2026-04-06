@@ -26,7 +26,7 @@ export async function sendInviteEmail(
   const { error } = await resend.emails.send({
     from:    env.RESEND_FROM_EMAIL,
     to:      toEmail,
-    subject: `${inviterName} invited you to ${orgName} on Nexus AI`,
+    subject: `${inviterName} invited you to ${orgName} on TeamDoQ`,
     html: `
       <!DOCTYPE html>
       <html>
@@ -34,16 +34,16 @@ export async function sendInviteEmail(
           <div style="max-width: 480px; margin: 0 auto; background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 32px;">
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px;">
               <div style="width: 28px; height: 28px; background: #06b6d4; border-radius: 4px; transform: rotate(12deg);"></div>
-              <span style="font-weight: bold; font-size: 18px; color: white;">Nexus AI</span>
+              <span style="font-weight: bold; font-size: 18px; color: white;">TeamDoQ</span>
             </div>
 
             <h2 style="color: white; margin: 0 0 12px;">You've been invited</h2>
             <p style="color: #a1a1aa; margin: 0 0 8px;">
               <strong style="color: #e4e4e7;">${inviterName}</strong> has invited you to join
-              <strong style="color: #e4e4e7;">${orgName}</strong> on Nexus AI.
+              <strong style="color: #e4e4e7;">${orgName}</strong> on TeamDoQ.
             </p>
             <p style="color: #71717a; font-size: 14px; margin: 0 0 28px;">
-              Nexus AI lets your team upload documents and ask questions using AI — with source citations.
+              TeamDoQ lets your team upload documents and ask questions using AI — with source citations.
             </p>
 
             <a

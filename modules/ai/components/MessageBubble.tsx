@@ -28,7 +28,7 @@ export default function MessageBubble({
       )}>
         {/* Role label */}
         <span className="text-zinc-600 text-xs px-1">
-          {isUser ? userName : "Nexus AI"}
+          {isUser ? userName : "TeamDoQ"}
         </span>
 
         {/* Bubble */}

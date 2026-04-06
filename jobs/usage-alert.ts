@@ -39,11 +39,11 @@ export const usageAlert = inngest.createFunction(
     
         // Example Resend integration (uncomment when ready):
         // await resend.emails.send({
-        //   from:    "Nexus AI <alerts@nexus.ai>",
+        //   from:    "TeamDoQ <alerts@teamdoq.app>",
         //   to:      user.email,
         //   subject: isExceeded
-        //     ? `[Nexus AI] Token limit reached — ${organization.name}`
-        //     : `[Nexus AI] You've used ${percentUsed.toFixed(0)}% of your monthly tokens`,
+        //     ? `[TeamDoQ] Token limit reached — ${organization.name}`
+        //     : `[TeamDoQ] You've used ${percentUsed.toFixed(0)}% of your monthly tokens`,
         //   html: buildAlertEmail({ user, organization, percentUsed, used, limit }),
         // })
     

@@ -13,8 +13,8 @@ const fontMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nexus AI",
-  description: "AI-powered document search for your team",
+  title: "TeamDoQ",
+  description: "Team knowledge base for PDFs — upload, vectorize, and ask questions with source-backed answers.",
 };
 
 export default function RootLayout({

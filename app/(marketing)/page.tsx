@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { auth } from "@/core/auth/config"
+import { TeamDoQLogo } from "@/components/brand/TeamDoQLogo"
 
 export default async function LandingPage() {
   const session = await auth()
@@ -14,8 +15,7 @@ export default async function LandingPage() {
       <nav className="border-b border-zinc-900 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-cyan-400 rounded-sm rotate-12" />
-            <span className="font-bold tracking-tight">Nexus AI</span>
+            <TeamDoQLogo size="md" />
           </div>
           <div>
             {isLoggedIn ? (

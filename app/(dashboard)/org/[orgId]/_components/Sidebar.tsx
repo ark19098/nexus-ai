@@ -16,6 +16,7 @@ import { usePathname, useParams } from "next/navigation"
 import { useState } from "react"
 import { signOutAction } from "@/core/auth/actions"
 import WorkspaceSwitcher from "@/modules/workspace/components/WorkspaceSwitcher"
+import { TeamDoQLogo } from "@/components/brand/TeamDoQLogo"
 import OrgSwitcher from "@/modules/organization/components/OrgSwitcher"
 
 interface Workspace {
@@ -86,8 +87,7 @@ export default function Sidebar({
 
       {/* ── Logo ── */}
       <div className="h-14 border-b border-zinc-800 flex items-center px-4 gap-2 shrink-0">
-        <div className="w-6 h-6 bg-cyan-400 rounded-sm rotate-12 shrink-0" />
-        <span className="text-white font-bold text-sm tracking-tight flex-1">Nexus AI</span>
+        <TeamDoQLogo className="flex-1 min-w-0" size="sm" />
         <button
           className="md:hidden p-1 rounded-md text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors"
           onClick={() => setMobileOpen(false)}

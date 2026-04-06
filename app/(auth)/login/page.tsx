@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 import { auth, signIn } from "@/core/auth/config"
+import { TeamDoQLogo } from "@/components/brand/TeamDoQLogo"
 
 export default async function LoginPage() {
   const session = await auth()
@@ -10,15 +11,12 @@ export default async function LoginPage() {
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        {/* Logo */}
+        {/* Brand (muted) — page title below is the hero */}
         <div className="mb-10 text-center">
-          <div className="inline-flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-cyan-400 rounded-sm rotate-16" />
-            <span className="text-white text-2xl font-bold tracking-tight">
-              Nexus AI
-            </span>
+          <div className="inline-flex items-center justify-center mb-3">
+            <TeamDoQLogo variant="auth" />
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-2">
             Welcome back
           </h1>
           <p className="text-zinc-500 text-md">
