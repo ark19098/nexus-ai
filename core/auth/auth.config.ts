@@ -14,10 +14,10 @@ export default {
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
   callbacks: {
-    async signIn({ user }) {
-      console.log("[AUTH: SIGN-IN] User attempting login:", user.email);
-      return true;
-    },
+    // async signIn({ user }) {
+    //   console.log("[AUTH: SIGN-IN] User attempting login:", user.email);
+    //   return true;
+    // },
     // Expose token data to the client
     async session({ session, token }) {
         if (session.user) {

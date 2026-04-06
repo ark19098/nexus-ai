@@ -1,4 +1,3 @@
-import { auth } from "@/core/auth/config";
 import { getWorkspaceById } from "@/core/db/queries/workspaces";
 import Link from "next/link";
 import { notFound } from "next/navigation";
