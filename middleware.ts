@@ -18,6 +18,7 @@ export default auth((req) => {
     const isPublicRoute = publicRoutes.includes(pathname);
     const isOnboardingRoute = pathname.startsWith("/onboarding");
     const isApiAuthRoute = pathname.startsWith("/api/auth");
+    const isInviteLinkRoute = pathname.startsWith("/api/invite");
     const isStripeWebhook = pathname.startsWith("/api/stripe");
     const isWebhooks = pathname.startsWith("/api/webhooks");
     const isInngestWebhook = pathname.startsWith("/api/inngest");
@@ -28,6 +29,7 @@ export default auth((req) => {
     if (
         isPublicRoute ||
         isApiAuthRoute ||
+        isInviteLinkRoute ||
         isOnboardingRoute ||
         isStripeWebhook ||
         isWebhooks ||

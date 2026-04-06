@@ -1,8 +1,16 @@
 import { redirect } from "next/navigation"
 import { auth, signIn } from "@/core/auth/config"
 import { TeamDoQLogo } from "@/components/brand/TeamDoQLogo"
+import { sanitizePostLoginRedirect } from "@/lib/safe-redirect"
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl?: string; error?: string }>
+}) {
+  const { callbackUrl } = await searchParams;
+  const redirectTo = sanitizePostLoginRedirect(callbackUrl) ?? "/onboarding";
+
   const session = await auth()
   if (session?.user?.orgId) {
     redirect(`/org/${session.user.orgId}`)
@@ -29,7 +37,7 @@ export default async function LoginPage() {
           <form
             action={async () => {
               "use server"
-              await signIn("google", { redirectTo: "/onboarding" })
+              await signIn("google", { redirectTo })
             }}
           >
             <button

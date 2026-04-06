@@ -4,7 +4,11 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "../db/client";
 import authConfig from "./auth.config";
 import { cookies } from "next/headers";
-import { Role } from "../db/generated";
+import {
+  consumePendingInviteCookieForUser,
+  invitationUsableForSigner,
+} from "@/lib/pending-invite";
+import type { Invitation } from "../db/generated";
 
 export const { handlers, auth, signIn, signOut, unstable_update: update } = NextAuth({
   ...authConfig,
@@ -20,20 +24,13 @@ export const { handlers, auth, signIn, signOut, unstable_update: update } = Next
         const cookieStore = await cookies();
         const inviteId = cookieStore.get("nexus_pending_invite")?.value;
 
-        let pendingInvite: { id: string; organizationId: string; email: string; role: Role } | null = null;
+        let pendingInvite: Invitation | null = null;
 
         if (inviteId) {
             const invitation = await prisma.invitation.findUnique({
                 where: { id: inviteId },
             });
-
-            // Validate invite: exists, not expired, not accepted, email matches
-            if (
-                invitation &&
-                invitation.expiresAt > new Date() &&
-                invitation.acceptedAt === null &&
-                invitation.email.toLowerCase() === user.email.toLowerCase()
-            ) {
+            if (invitationUsableForSigner(invitation, user.email)) {
                 pendingInvite = invitation;
             }
         }
@@ -45,31 +42,9 @@ export const { handlers, auth, signIn, signOut, unstable_update: update } = Next
         });
 
         if (!existingUser) {
-            // PrismaAdapter creates the User record automatically
-            // We wait for it by finding the user after adapter runs
-            // signIn fires after adapter — user should exist now
-            const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
-            if (!dbUser) return true;  // adapter will create it, let it proceed
-
-            if (pendingInvite) {
-                await prisma.membership.create({
-                    data: {
-                        userId: dbUser.id,
-                        organizationId: pendingInvite.organizationId,
-                        role: pendingInvite.role,
-                    },
-                });
-
-                await prisma.invitation.update({
-                    where: { id: pendingInvite.id },
-                    data: { acceptedAt: new Date() },
-                });
-            } else {
-                // NEW USER + NO INVITE → do nothing
-                // orgId will be null in JWT → middleware sends to /onboarding
-                // createOrgAction on onboarding form handles org + workspace creation
-            }
-
+            // New OAuth user: adapter hasn't written the row yet at this point.
+            // Pending invite is consumed in the jwt callback after the row exists.
+            return true;
         } else {
             // Existing user — handle joining a second org via invite
             if (pendingInvite) {
@@ -117,6 +92,11 @@ export const { handlers, auth, signIn, signOut, unstable_update: update } = Next
         if (user) {
             console.log("[AUTH: JWT CREATED] New token minted for:", user);
             token.id = user.id;
+
+            if (user.email) {
+                await consumePendingInviteCookieForUser(user.id as string, user.email);
+            }
+
             const dbUser = await prisma.user.findUnique({
                 where: { id: token.id as string },
                 include: { memberships: { orderBy: { createdAt: "desc" } } },

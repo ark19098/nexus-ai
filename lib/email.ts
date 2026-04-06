@@ -32,9 +32,9 @@ export async function sendInviteEmail(
       <html>
         <body style="font-family: sans-serif; background: #09090b; color: #e4e4e7; padding: 40px 20px;">
           <div style="max-width: 480px; margin: 0 auto; background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 32px;">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px;">
-              <div style="width: 28px; height: 28px; background: #06b6d4; border-radius: 4px; transform: rotate(12deg);"></div>
-              <span style="font-weight: bold; font-size: 18px; color: white;">TeamDoQ</span>
+            <!-- Text wordmark: inline SVG is often stripped by Gmail/Outlook — use a visible cyan Q -->
+            <div style="margin-bottom: 24px; font-size: 20px; line-height: 1.2;">
+              <span style="font-weight: 700; color: #fafafa; letter-spacing: -0.02em;">TeamDo</span><span style="font-weight: 700; color: #38bdf8;">Q</span>
             </div>
 
             <h2 style="color: white; margin: 0 0 12px;">You've been invited</h2>

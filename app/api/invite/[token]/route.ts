@@ -10,7 +10,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const { token } = await params;
 
     if (!token) {
-        return NextResponse.redirect(new URL("/login?error=InvalidInvite", request.url))
+        return NextResponse.redirect(new URL("/login?error=InvalidInvite", request.url));
     }
     
     const tokenHash = hashInviteToken(token);
@@ -26,7 +26,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Set secure httpOnly cookie with invite ID (NextAuth signIn callback reads this to join the correct org)
-    const response = NextResponse.redirect(new URL("/login", request.url));
+    // Set cookie + send user to login with post-OAuth redirect so signIn doesn't land on /onboarding only
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", `/org/${invitation.organizationId}`);
+    const response = NextResponse.redirect(loginUrl);
 
     response.cookies.set("nexus_pending_invite", invitation.id, {
         httpOnly: true,
