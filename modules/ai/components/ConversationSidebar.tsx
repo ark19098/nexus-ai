@@ -30,7 +30,7 @@ export default function ConversationSidebar({
   onDelete,
 }: Props) {
   const sidebarContent = (
-    <div className="flex flex-col h-full bg-zinc-950">
+    <div className="flex flex-col h-full w-full bg-zinc-950">
       {/* Header */}
       <div className="p-3 border-b border-zinc-800 shrink-0 flex items-center gap-2">
         <button
@@ -122,8 +122,17 @@ function ConversationItem({
   const [isPending, startTransition] = useTransition()
   const [hovered, setHovered]        = useState(false)
 
-  const preview = conversation.messages[0]?.content?.slice(0, 55) ?? "New conversation"
-  const title   = conversation.title ?? preview
+  const firstMessage = conversation.messages[0]?.content?.trim() ?? ""
+  const titled = conversation.title?.trim() ?? null
+  /** Primary label: explicit title, else first message, else placeholder */
+  const primary = titled || firstMessage || "New conversation"
+  /** Second line only when we have a real title and the snippet differs (avoid duplicate rows) */
+  const showPreviewLine =
+    titled !== null &&
+    titled.length > 0 &&
+    firstMessage.length > 0 &&
+    firstMessage !== titled &&
+    !firstMessage.startsWith(titled)
 
   function handleDelete(e: React.MouseEvent) {
     e.stopPropagation()
@@ -151,9 +160,19 @@ function ConversationItem({
     >
       <MessageSquare className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${isActive ? "text-cyan-400" : "text-zinc-600"}`} />
 
-      <div className="flex-1 min-w-0">
-        <p className="text-xs font-medium truncate leading-tight">{title}</p>
-        <p className="text-xs text-zinc-600 truncate mt-0.5 leading-tight">{preview}</p>
+      <div className="flex-1 min-w-0 overflow-hidden">
+        <p
+          className={`text-xs font-medium leading-snug line-clamp-3 break-word ${
+            isActive ? "text-white" : ""
+          }`}
+        >
+          {primary}
+        </p>
+        {showPreviewLine && (
+          <p className="text-xs text-zinc-600 leading-snug line-clamp-2 break-word mt-0.5">
+            {firstMessage}
+          </p>
+        )}
       </div>
 
       {/* Delete button — visible on hover or active */}

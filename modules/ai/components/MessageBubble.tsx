@@ -49,7 +49,7 @@ export default function MessageBubble({
         </div>
 
         {/* Source citations — shown below bubble */}
-        {!isUser && message.metadata && message.metadata.sources.length > 0 && (
+        {!isUser && message.metadata && message.metadata.sources.length > 0 && !message.isStreaming && (
           <SourceCitations sources={message.metadata.sources} />
         )}
       </div>
