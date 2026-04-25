@@ -8,6 +8,8 @@ export const s3Client = new S3Client({
     accessKeyId: env.S3_ACCESS_KEY_ID,
     secretAccessKey: env.S3_SECRET_ACCESS_KEY,
   },
+  requestChecksumCalculation: "WHEN_REQUIRED",
+  responseChecksumValidation: "WHEN_REQUIRED",
 })
 
 export async function downloadFromR2(fileKey: string): Promise<Buffer> {

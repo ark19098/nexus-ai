@@ -30,7 +30,7 @@ export async function POST(req: Request) {
         }
 
         const fileExtension = fileName.split(".").pop();
-        const uniqueFileKey = `/${session.user.orgId}/${randomUUID()}.${fileExtension}`;
+        const uniqueFileKey = `${session.user.orgId}/${randomUUID()}.${fileExtension}`;
 
         if (!ALLOWED_FILE_TYPES.includes(contentType)) {
             return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
@@ -40,6 +40,7 @@ export async function POST(req: Request) {
             Bucket: env.S3_BUCKET_NAME,
             Key: uniqueFileKey,
             ContentType: contentType,
+            ChecksumAlgorithm: undefined,
         });
 
         const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 });
